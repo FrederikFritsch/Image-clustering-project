@@ -15,7 +15,31 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 import seaborn as sns
+from PIL import Image
 
+
+def combine_images(columns, space, images):
+    rows = len(images) // columns
+    if len(images) % columns:
+        rows += 1
+    width_max = max([Image.open(image).width for image in images])
+    height_max = max([Image.open(image).height for image in images])
+    background_width = width_max*columns + (space*columns)-space
+    background_height = height_max*rows + (space*rows)-space
+    background = Image.new('RGBA', (background_width, background_height), (255, 255, 255, 255))
+    x = 0
+    y = 0
+    for i, image in enumerate(images):
+        img = Image.open(image)
+        x_offset = int((width_max-img.width)/2)
+        y_offset = int((height_max-img.height)/2)
+        background.paste(img, (x+x_offset, y+y_offset))
+        x += width_max + space
+        if (i+1) % columns == 0:
+            y += height_max + space
+            x = 0
+    return background
+    #background.save('image.png')
 
 def traditional_feature_extraction(path, size = 244, kernelsize = (10, 20), thetarotations = 4, sigmas = (1,3), lamdas = (np.pi /2, np.pi), gammas = (0.5, 0.05)):
     image = cv.imread(path)
@@ -24,7 +48,7 @@ def traditional_feature_extraction(path, size = 244, kernelsize = (10, 20), thet
     df = pd.DataFrame()
     
     color_distributions = {}
-    color_distributions["Name"] = os.path.basename(path)
+    color_distributions["Name"] = path
 
     #Feature 1: Add color distributions as attributes
     for channel, color in zip(cv.split(image), ["Blue", "Green", "Red"]):
@@ -137,7 +161,7 @@ if __name__ == "__main__":
 
     # --------- CALCULATE K-MEANS CLUSTERS ------------
     for nr_clusters in range(min_clusters, max_clusters+1):
-        kmeans = KMeans(init = "random", n_clusters = nr_clusters, n_init = 10, max_iter=300, random_state = 42)
+        kmeans = KMeans(init = "random", n_clusters = nr_clusters, n_init = 10, max_iter=300, random_state = 22)
         kmeans.fit(scores_pca)
         sse.append(kmeans.inertia_)
         score = silhouette_score(scores_pca, kmeans.labels_)
@@ -181,8 +205,22 @@ if __name__ == "__main__":
         legend="full",
         alpha=0.9
     )
-    plt.show()
+    #plt.show()
+
+
+# ---------- STORE IMAGE PATHS OF EACH CLUSTER IN LISTS ------------
     
+
+    for cluster_number in range(n_clusters):
+        cluster = tsne_df.loc[tsne_df["ClusterID"]==cluster_number]
+        image_list = []
+        for image_path in cluster["Image Name"]:
+            image_list.append(image_path)
+
+        column_number = int(np.ceil(np.sqrt(len(image_list))))
+        
+        merged_image = combine_images(columns=column_number, space=10, images=image_list)
+        merged_image.show()
 
 #Second set - NEED TO DO EDGE DETECTION FOR RGB
 
