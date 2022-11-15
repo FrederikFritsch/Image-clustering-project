@@ -104,6 +104,19 @@ def traditional_feature_extraction(path, size = 244, kernelsize = (10, 20), thet
     returndf = df1.join(df2)
     return returndf
 
+def perform_KMeans(data, min_clusters, max_clusters):
+    # --------- CALCULATE K-MEANS CLUSTERS ------------
+    sse = []
+    silhouette_coefficients = []
+    labels = []
+    for nr_clusters in range(min_clusters, max_clusters+1):
+        kmeans = KMeans(init = "random", n_clusters = nr_clusters, n_init = 10, max_iter=300, random_state = 22)
+        kmeans.fit(data)
+        sse.append(kmeans.inertia_)
+        score = silhouette_score(data, kmeans.labels_)
+        silhouette_coefficients.append(score)
+        labels.append(kmeans.labels_)
+    return sse, score, silhouette_coefficients, labels
 
 def get_image_paths(full_data_dir_path):
     all_paths = []
@@ -155,21 +168,14 @@ if __name__ == "__main__":
     scores_pca = pca.transform(df[features])
     min_clusters = 2
     max_clusters = 5
-    sse = []
-    silhouette_coefficients = []
-    labels = []
 
-    # --------- CALCULATE K-MEANS CLUSTERS ------------
-    for nr_clusters in range(min_clusters, max_clusters+1):
-        kmeans = KMeans(init = "random", n_clusters = nr_clusters, n_init = 10, max_iter=300, random_state = 22)
-        kmeans.fit(scores_pca)
-        sse.append(kmeans.inertia_)
-        score = silhouette_score(scores_pca, kmeans.labels_)
-        silhouette_coefficients.append(score)
-        labels.append(kmeans.labels_)
+
+    # ---- CALCULATE KMeans Clusters
+    sse, score, silhouette_coefficients, labels = perform_KMeans(scores_pca, min_clusters, max_clusters)
 
 
     # ---------- EVALUATE CLUSTER SIZES --------------
+
     kl = KneeLocator(range(min_clusters, max_clusters+1), sse, curve="convex", direction="decreasing")
     print(kl.elbow)
     n_clusters = np.argmax(silhouette_coefficients)+min_clusters
