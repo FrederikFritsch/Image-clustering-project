@@ -13,6 +13,8 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
+import seaborn as sns
 
 
 def traditional_feature_extraction(path, size = 244, kernelsize = (10, 20), thetarotations = 4, sigmas = (1,3), lamdas = (np.pi /2, np.pi), gammas = (0.5, 0.05)):
@@ -78,36 +80,50 @@ def traditional_feature_extraction(path, size = 244, kernelsize = (10, 20), thet
     returndf = df1.join(df2)
     return returndf
 
-if __name__ == "__main__":
 
-    base_dir = os.getcwd()
-    data_dir = "/Image_Data/"
-    full_dir_path = base_dir + data_dir
+def get_image_paths(full_data_dir_path):
     all_paths = []
-
-    for index, directories in enumerate(os.walk(full_dir_path)):
+    for index, directories in enumerate(os.walk(full_data_dir_path)):
         for sample in directories[2]:
             if sample.endswith('.png'):
                 full_path = directories[0] + "/" + sample
                 all_paths.append(full_path)
+    return all_paths
+
+if __name__ == "__main__":
+    take_time = True
+    base_dir = os.getcwd()
+    data_dir = "/Image_Data/"
+    full_data_dir_path = base_dir + data_dir
     
-    size = 244
+    # ------ GET ALL IMAGE PATHS IN DATA DIRECTORY --------
+    all_image_paths = get_image_paths(full_data_dir_path)
+
+    
+    image_size = 244
     dataframe_list = []
-    starttime = time.time()
-    for path in all_paths:
-        dataframe = traditional_feature_extraction(path, size)
+    if take_time: starttime = time.time()
+
+    # ------- APPLY TRADITIONAL FEATURE EXTRACTION METHODS -----------
+
+    for path in all_image_paths:
+        dataframe = traditional_feature_extraction(path, image_size)
         dataframe_list.append(dataframe)
     df = pd.concat(dataframe_list)
-    endtime = time.time()
-    print(f"Time elapsed to extract features of {len(all_paths)} Images: {endtime-starttime}")
+
+    if take_time: endtime = time.time()
+    if take_time: print(f"Time elapsed to extract features of {len(all_image_paths)} Images: {endtime-starttime}")
     
+
+    # -------- STANDARDIZE FEATURE DATA (Z-TRANSFORM) --------------
     features = df.columns[1:]
-    #print(features)
+    print(features)
     scaler = StandardScaler()
     scaler.fit(df[features])
     df[features] = scaler.transform(df[features])
     #print(df)
 
+    # -------- APPLY PCA FEATURES --------------
     pca = PCA(0.95)
     pca.fit(df[features])
     print(f"Explained components: {pca.explained_variance_ratio_}")
@@ -117,18 +133,37 @@ if __name__ == "__main__":
     max_clusters = 5
     sse = []
     silhouette_coefficients = []
+    labels = []
+
+    # --------- CALCULATE K-MEANS CLUSTERS ------------
     for nr_clusters in range(min_clusters, max_clusters+1):
         kmeans = KMeans(init = "random", n_clusters = nr_clusters, n_init = 10, max_iter=300, random_state = 42)
         kmeans.fit(scores_pca)
         sse.append(kmeans.inertia_)
         score = silhouette_score(scores_pca, kmeans.labels_)
         silhouette_coefficients.append(score)
+        labels.append(kmeans.labels_)
 
 
+    # ---------- EVALUATE CLUSTER SIZES --------------
     kl = KneeLocator(range(min_clusters, max_clusters+1), sse, curve="convex", direction="decreasing")
     print(kl.elbow)
-    print(f"Silhouette coefficient: {np.argmax(silhouette_coefficients)+min_clusters} clusters return best results")
-    fig, axes = plt.subplots(2, 1, sharex=True)
+    n_clusters = np.argmax(silhouette_coefficients)+min_clusters
+    print(f"Silhouette coefficient: {n_clusters} clusters return best results")
+
+
+    # ----------- CALCULATE TSNE FOR PLOTTING ---------
+    X = TSNE(n_components=2, perplexity=4).fit_transform(scores_pca)
+    tsne_df = pd.DataFrame()
+    cluster_labels = pd.Series(labels[np.argmax(silhouette_coefficients)])
+    
+    tsne_df['ClusterID'] = cluster_labels.values
+    
+    tsne_df["X_tsne"]  = X[:, 0]
+    tsne_df["Y_tsne"] = X[:, 1]
+    print(tsne_df)
+
+    fig, axes = plt.subplots(2, 1)
     plt.style.use("fivethirtyeight")
     axes[0].plot(range(min_clusters, max_clusters+1), sse)
     axes[0].set_xlabel("Number of Clusters")
@@ -136,6 +171,16 @@ if __name__ == "__main__":
     axes[1].plot(range(min_clusters, max_clusters+1), silhouette_coefficients)
     axes[1].set_xlabel("Number of Clusters")
     axes[1].set_ylabel("Silhouette Coefficient")
+    
+    plt.figure(figsize=(16,10))
+    sns.scatterplot(
+        x="X_tsne", y="Y_tsne",
+        hue="ClusterID",
+        palette=sns.color_palette("hls", 10),
+        data=tsne_df,
+        legend="full",
+        alpha=0.9
+    )
     plt.show()
     
 
