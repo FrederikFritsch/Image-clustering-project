@@ -156,11 +156,11 @@ if __name__ == "__main__":
     X = TSNE(n_components=2, perplexity=4).fit_transform(scores_pca)
     tsne_df = pd.DataFrame()
     cluster_labels = pd.Series(labels[np.argmax(silhouette_coefficients)])
-    
+    tsne_df["Image Name"] = df["Name"]
     tsne_df['ClusterID'] = cluster_labels.values
-    
     tsne_df["X_tsne"]  = X[:, 0]
     tsne_df["Y_tsne"] = X[:, 1]
+    
     print(tsne_df)
 
     fig, axes = plt.subplots(2, 1)
