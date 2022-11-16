@@ -1,22 +1,18 @@
 import numpy as np
-import cv2 as cv
+#import cv2 as cv
 import pandas as pd
-from skimage.filters import roberts, sobel, scharr, prewitt
-from scipy import ndimage as nd
-from scipy.stats import skew
 import os
 import time
 import matplotlib.pyplot as plt
 from kneed import KneeLocator
-from sklearn.datasets import make_blobs
-from sklearn.cluster import KMeans
-from sklearn.metrics import silhouette_score
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, normalize
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 import seaborn as sns
 from PIL import Image
-
+from clusteringAlgorithms import perform_KMeans
+from featureExtraction import traditional_feature_extraction
+from filterCreation import create_gabor_filters
 
 def combine_images(columns, space, images):
     rows = len(images) // columns
@@ -41,83 +37,6 @@ def combine_images(columns, space, images):
     return background
     #background.save('image.png')
 
-def traditional_feature_extraction(path, size = 244, kernelsize = (10, 20), thetarotations = 4, sigmas = (1,3), lamdas = (np.pi /2, np.pi), gammas = (0.5, 0.05)):
-    image = cv.imread(path)
-    image = cv.resize(image, (size, size), interpolation= cv.INTER_LINEAR)   
-
-    df = pd.DataFrame()
-    
-    color_distributions = {}
-    color_distributions["Name"] = path
-
-    #Feature 1: Add color distributions as attributes
-    for channel, color in zip(cv.split(image), ["Blue", "Green", "Red"]):
-        color_distributions[color+"Mean"] = channel.mean()
-        color_distributions[color+"Std"] = channel.std()
-        color_distributions[color+"Skewness"] = skew(channel.reshape(-1))
-
-
-    #Convert to grayscale for gabor filters
-    grey_image = cv.cvtColor(image, cv.COLOR_BGR2GRAY) 
-    image2 = grey_image.reshape(-1)
-    num = 1
-    kernels = []
-    gabor_features = {}
-
-    for ksize in kernelsize:                              # Kernel size
-        for theta in range(thetarotations):               # number of rotations
-            theta = theta / 4. * np.pi
-            for sigma in sigmas:                        # SIGMA with 1 and 3
-                for lamda in lamdas:         # range of wavelengths
-                    for gamma in gammas:           # GAMMA values of 0.05 and 0.5
-                        gabor_label = 'Gabor' + str(num)
-                        phi = 0
-                        #CREATE Kernel and APPLY Filter
-                        kernel = cv.getGaborKernel((ksize,ksize), sigma, theta, lamda, gamma, phi, ktype=cv.CV_32F)
-                        kernels.append(kernel)
-                        fimg = cv.filter2D(image2, cv.CV_8UC3, kernel)
-                        filtered_image = np.array(fimg.reshape(-1))
-
-                        #Calculate mean and std                    
-                        mean = sum(filtered_image)/len(filtered_image)
-                        std = np.std(filtered_image)
-
-                        #Add mean and std to feature vector
-                        gabor_mean = gabor_label + "Mean"
-                        gabor_std = gabor_label + "Std"
-
-                        gabor_features[gabor_mean] = mean
-                        gabor_features[gabor_std] = std
-                        num += 1
-
-                        #df[gabor_label] = filtered_image
-                        #print(gabor_label, mean, std)
-                        #kernel_resized = cv.resize(kernel, (400, 400))
-                        #cv.imshow("Kernel: Theta " + str(theta) +" Sigma "+ str(sigma) +" Lamda "+ str(lamda) +" Gamma "+ str(gamma), kernel_resized)
-                        #cv.imshow("Kernel", kernel_resized)
-                        #cv.imshow("Original img", image)
-                        #cv.imshow("Filtered", filtered_image.reshape(grey_image.shape))
-                        #cv.waitKey(0)
-
-    df1 = pd.DataFrame([color_distributions])
-    df2 = pd.DataFrame([gabor_features])
-    returndf = df1.join(df2)
-    return returndf
-
-def perform_KMeans(data, min_clusters, max_clusters):
-    # --------- CALCULATE K-MEANS CLUSTERS ------------
-    sse = []
-    silhouette_coefficients = []
-    labels = []
-    for nr_clusters in range(min_clusters, max_clusters+1):
-        kmeans = KMeans(init = "random", n_clusters = nr_clusters, n_init = 10, max_iter=300, random_state = 22)
-        kmeans.fit(data)
-        sse.append(kmeans.inertia_)
-        score = silhouette_score(data, kmeans.labels_)
-        silhouette_coefficients.append(score)
-        labels.append(kmeans.labels_)
-    return sse, score, silhouette_coefficients, labels
-
 def get_image_paths(full_data_dir_path):
     all_paths = []
     for index, directories in enumerate(os.walk(full_data_dir_path)):
@@ -132,6 +51,7 @@ if __name__ == "__main__":
     base_dir = os.getcwd()
     data_dir = "/Image_Data/"
     full_data_dir_path = base_dir + data_dir
+    NORMALIZE = True
     
     # ------ GET ALL IMAGE PATHS IN DATA DIRECTORY --------
     all_image_paths = get_image_paths(full_data_dir_path)
@@ -142,9 +62,10 @@ if __name__ == "__main__":
     if take_time: starttime = time.time()
 
     # ------- APPLY TRADITIONAL FEATURE EXTRACTION METHODS -----------
+    gabor_filters = create_gabor_filters()
 
     for path in all_image_paths:
-        dataframe = traditional_feature_extraction(path, image_size)
+        dataframe = traditional_feature_extraction(path, gabor_filters, image_size)
         dataframe_list.append(dataframe)
     df = pd.concat(dataframe_list)
 
@@ -154,11 +75,15 @@ if __name__ == "__main__":
 
     # -------- STANDARDIZE FEATURE DATA (Z-TRANSFORM) --------------
     features = df.columns[1:]
-    print(features)
-    scaler = StandardScaler()
-    scaler.fit(df[features])
-    df[features] = scaler.transform(df[features])
-    #print(df)
+    #print(features)
+    if NORMALIZE:
+        df[features] = normalize(df[features])
+        
+    else:
+        scaler = StandardScaler()
+        scaler.fit(df[features])
+        df[features] = scaler.transform(df[features])
+    print(df)
 
     # -------- APPLY PCA FEATURES --------------
     pca = PCA(0.95)
@@ -166,8 +91,8 @@ if __name__ == "__main__":
     print(f"Explained components: {pca.explained_variance_ratio_}")
 
     scores_pca = pca.transform(df[features])
-    min_clusters = 2
-    max_clusters = 5
+    min_clusters = 3
+    max_clusters = 20
 
 
     # ---- CALCULATE KMeans Clusters
@@ -178,12 +103,15 @@ if __name__ == "__main__":
 
     kl = KneeLocator(range(min_clusters, max_clusters+1), sse, curve="convex", direction="decreasing")
     print(kl.elbow)
-    n_clusters = np.argmax(silhouette_coefficients)+min_clusters
+    if kl.elbow:
+        n_clusters = kl.elbow
+    else:
+        n_clusters = np.argmax(silhouette_coefficients)+min_clusters
     print(f"Silhouette coefficient: {n_clusters} clusters return best results")
 
 
     # ----------- CALCULATE TSNE FOR PLOTTING ---------
-    X = TSNE(n_components=2, perplexity=4).fit_transform(scores_pca)
+    X = TSNE(n_components=2, perplexity=40).fit_transform(scores_pca)
     tsne_df = pd.DataFrame()
     cluster_labels = pd.Series(labels[np.argmax(silhouette_coefficients)])
     tsne_df["Image Name"] = df["Name"]
@@ -211,7 +139,7 @@ if __name__ == "__main__":
         legend="full",
         alpha=0.9
     )
-    #plt.show()
+    plt.show()
 
 
 # ---------- STORE IMAGE PATHS OF EACH CLUSTER IN LISTS ------------
@@ -224,9 +152,9 @@ if __name__ == "__main__":
             image_list.append(image_path)
 
         column_number = int(np.ceil(np.sqrt(len(image_list))))
-        
-        merged_image = combine_images(columns=column_number, space=10, images=image_list)
-        merged_image.show()
+        if len(image_list):
+            merged_image = combine_images(columns=column_number, space=10, images=image_list)
+            merged_image.show()
 
 #Second set - NEED TO DO EDGE DETECTION FOR RGB
 
