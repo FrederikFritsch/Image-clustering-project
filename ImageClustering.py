@@ -14,6 +14,7 @@ from clusteringAlgorithms import *
 from featureExtraction import *
 from filterCreation import *
 from supportFunctions import *
+import datetime
 
 
 if __name__ == "__main__":
@@ -33,12 +34,12 @@ if __name__ == "__main__":
         print("Wrong usage of arguments.")
         print(e)
         quit()
-        
+    
     #image_size = (320, 175)
     take_time = True
     base_dir = os.getcwd()
     full_data_dir_path = base_dir + data_dir
-    
+
     all_image_paths = get_image_paths(full_data_dir_path) #Get image paths in data directory
     gabor_filters = create_gabor_filters() # Creates list of Gabor filters
     
@@ -120,7 +121,11 @@ if __name__ == "__main__":
 
 
         #Image merging and showing/storing
-    
+        date = datetime.datetime.now()
+        dir_name = date.strftime("%c")#.replace(":", "")
+        os.mkdir(base_dir+"/Results/Traditional/"+dir_name)
+        results_path = base_dir+"/Results/Traditional/"+dir_name+"/"
+        os.chdir(results_path)
         for cluster_number in range(n_clusters):
             cluster = tsne_df.loc[tsne_df["ClusterID"]==cluster_number]
             image_list = []
@@ -130,7 +135,11 @@ if __name__ == "__main__":
             column_number = int(np.ceil(np.sqrt(len(image_list))))
             if len(image_list):
                 merged_image = combine_images(columns=column_number, space=10, images=image_list)
-                merged_image.show()
+                merged_image.save(str(cluster_number)+".png")
+                #merged_image.show()
+        os.chdir(base_dir)
+
+
 
 #Second set - NEED TO DO EDGE DETECTION FOR RGB
 

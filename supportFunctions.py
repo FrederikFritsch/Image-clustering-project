@@ -18,8 +18,16 @@ def combine_images(columns, space, images):
     rows = len(images) // columns
     if len(images) % columns:
         rows += 1
-    width_max = max([Image.open(image).width for image in images])
-    height_max = max([Image.open(image).height for image in images])
+    widths = []
+    heights = []
+    for image in images:
+        img = Image.open(image)
+        widths.append(img.width)
+        heights.append(img.height)
+        img.close()
+    width_max = max(widths)
+    height_max = max(heights)
+    print(width_max, height_max)
     background_width = width_max*columns + (space*columns)-space
     background_height = height_max*rows + (space*rows)-space
     background = Image.new('RGBA', (background_width, background_height), (255, 255, 255, 255))
@@ -34,6 +42,7 @@ def combine_images(columns, space, images):
         if (i+1) % columns == 0:
             y += height_max + space
             x = 0
+        img.close()
     return background
 
 def get_image_paths(full_data_dir_path):
