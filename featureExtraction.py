@@ -2,11 +2,13 @@ import numpy as np
 import cv2 as cv
 import pandas as pd
 from scipy.stats import skew
+from supportFunctions import crop_square
 
 
-def traditional_feature_extraction(path, kernels, size = 244):
+def traditional_feature_extraction(path, kernels, size = (320, 175)):
     image = cv.imread(path)
-    image = cv.resize(image, (size, size), interpolation= cv.INTER_LINEAR)   
+    #image = crop_square(image, size)
+    image = cv.resize(image, size, interpolation= cv.INTER_LINEAR)   
     
     color_distributions = {}
     color_distributions["Name"] = path
@@ -43,12 +45,12 @@ def traditional_feature_extraction(path, kernels, size = 244):
 
         #df[gabor_label] = filtered_image
         #print(gabor_label, mean, std)
-        #kernel_resized = cv.resize(kernel, (400, 400))
+        kernel_resized = cv.resize(kernel, (400, 400))
         #cv.imshow("Kernel: Theta " + str(theta) +" Sigma "+ str(sigma) +" Lamda "+ str(lamda) +" Gamma "+ str(gamma), kernel_resized)
-        #cv.imshow("Kernel", kernel_resized)
-        #cv.imshow("Original img", image)
-        #cv.imshow("Filtered", filtered_image.reshape(grey_image.shape))
-        #cv.waitKey(0)
+        cv.imshow("Kernel", kernel_resized)
+        cv.imshow("Original img", image)
+        cv.imshow("Filtered", filtered_image.reshape(grey_image.shape))
+        cv.waitKey(0)
     
     df1 = pd.DataFrame([color_distributions])
     df2 = pd.DataFrame([gabor_features])
