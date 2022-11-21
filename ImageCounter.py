@@ -15,7 +15,7 @@ if __name__ == "__main__":
                 tmp += 1
     print(tmp)
     try: 
-        os.mkdir("Results")
+        os.mkdir("ResultsTest")
     except:
         pass
     results_dir = base_dir + "/Results/"
