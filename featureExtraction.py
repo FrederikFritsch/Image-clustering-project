@@ -1,8 +1,9 @@
+import enum
 import numpy as np
 import cv2 as cv
 import pandas as pd
 from scipy.stats import skew
-from supportFunctions import crop_square
+from Utils import crop_square
 
 
 def traditional_feature_extraction(path, kernels, size = (320, 175)):
@@ -12,12 +13,19 @@ def traditional_feature_extraction(path, kernels, size = (320, 175)):
 
     color_distributions = {}
     color_distributions["Name"] = path
-
+    
     #Feature 1: Add color distributions as attributes
     for channel, color in zip(cv.split(image), ["Blue", "Green", "Red"]):
+        histogram, bin_edges = np.histogram(channel, bins = 64, range= (0, 256))
+        ##print(histogram)
+        ##print(bin_edges)
+        for index, bin in enumerate(bin_edges[0:-1]):
+            color_distributions[color+str(bin)] = histogram[index]
         color_distributions[color+"Mean"] = channel.mean()
         color_distributions[color+"Std"] = channel.std()
         color_distributions[color+"Skewness"] = skew(channel.reshape(-1))
+    #cv.waitKey()
+    #print(color_distributions)
 
 
     #Convert to grayscale for gabor filters
@@ -52,7 +60,20 @@ def traditional_feature_extraction(path, kernels, size = (320, 175)):
         #cv.imshow("Filtered", filtered_image.reshape(grey_image.shape))
         #cv.waitKey(0)
 
+    #Canny edge
+    edge_features = {}
+    edge_canny = cv.Canny(grey_image, 200, 300)
+    edge_canny = edge_canny
+    row_sums = np.sum(edge_canny, axis = 0)
+    column_sums = np.sum(edge_canny, axis = 1)
+    for index, row in enumerate(row_sums):
+        edge_features["Row"+str(index)] = row
+    for index, column in enumerate(column_sums):
+        edge_features["Column"+str(index)] = column
+    
+
     df1 = pd.DataFrame([color_distributions])
     df2 = pd.DataFrame([gabor_features])
-    returndf = df1.join(df2)
+    df3 = pd.DataFrame([edge_features])
+    returndf = df1.join(df3)
     return returndf

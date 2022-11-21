@@ -13,7 +13,7 @@ import seaborn as sns
 from clusteringAlgorithms import *
 from featureExtraction import *
 from filterCreation import *
-from supportFunctions import *
+from Utils import *
 import datetime
 
 
@@ -50,54 +50,72 @@ if __name__ == "__main__":
     for path in all_image_paths:
         dataframe = traditional_feature_extraction(path, gabor_filters, image_size)
         dataframe_list.append(dataframe)
-    df = pd.concat(dataframe_list)
-    
+    df = pd.concat(dataframe_list, ignore_index=True)
+    #print(df.info())
+    #print(df.head())
+    #print(df.describe())
     if take_time: endtime = time.time() #Stop time
     if take_time: print(f"Time elapsed to extract features of {len(all_image_paths)} Images: {endtime-starttime}")
     
 
     # Feature normalization
-    features = df.columns[1:]
-    if debug: print(features)
+    features_df = df.loc[:, df.columns[1:]]
+    image_names_df = df.loc[:, ['Name']]
+    
+    #print(image_names_df)
+    if debug: print(features_df.describe())
     if normalization_method == "normalize":
-        df[features] = normalize(df[features])
+        print("Normalizing")
+        features_df = normalize(features_df)
     else:
         scaler = StandardScaler()
-        scaler.fit(df[features])
-        df[features] = scaler.transform(df[features])
-
+        print("Standardizing")
+        #scaler.fit(features_df)
+        features_df = scaler.fit_transform(features_df)
+    
     # Dimensionality reduction
     pca = PCA(pca_variance)
-    pca.fit(df[features])
-    scores_pca = pca.transform(df[features])
+    #pca.fit(features_df)
+    features_pca_df = pca.fit_transform(features_df)
+    #print(features_pca_df)
     if debug: print(f"Explained components: {pca.explained_variance_ratio_}")
 
     # Clustering
-    sse, score, silhouette_coefficients, labels = perform_KMeans(scores_pca, min_clusters, max_clusters)
+    sse, score, silhouette_coefficients, labels = perform_KMeans(features_pca_df, min_clusters, max_clusters)
 
 
     # Cluster number evaluation
 
     kl = KneeLocator(range(min_clusters, max_clusters+1), sse, curve="convex", direction="decreasing")
-    if debug: print(kl.elbow)
-    if kl.elbow:
-        n_clusters = kl.elbow
-    else:
-        n_clusters = np.argmax(silhouette_coefficients)+min_clusters
+    #if debug: print(f"Elbow Method returns: {kl.elbow} Clusters")
+    #if kl.elbow:
+    #    n_clusters = kl.elbow + 1
+    #else:
+    n_clusters = np.argmax(silhouette_coefficients) + min_clusters
     if debug: print(f"Silhouette coefficient: {n_clusters} clusters return best results")
+    
+    lables_index = np.argmax(silhouette_coefficients)
+    #print(lables_index)
+    #print(labels[lables_index])
+    cluster_labels = pd.DataFrame(labels[lables_index], columns=["Cluster"])
+    #print(image_names_df)
+    #print(cluster_labels)
+    
+    results_df = pd.concat([image_names_df, cluster_labels], axis=1)
+    #print(results_df)
 
 
     # Only Plotting below this line
     if show_plots:
-        X = TSNE(n_components=2, perplexity=40).fit_transform(scores_pca)
+        X = TSNE(n_components=2, perplexity=5).fit_transform(features_pca_df)
         tsne_df = pd.DataFrame()
-        cluster_labels = pd.Series(labels[np.argmax(silhouette_coefficients)])
+        #cluster_labels = pd.Series(labels[np.argmax(silhouette_coefficients)])
         tsne_df["Image Name"] = df["Name"]
         tsne_df['ClusterID'] = cluster_labels.values
         tsne_df["X_tsne"]  = X[:, 0]
         tsne_df["Y_tsne"] = X[:, 1]
 
-        print(tsne_df)
+        #print(tsne_df)
         fig, axes = plt.subplots(2, 1)
         plt.style.use("fivethirtyeight")
         axes[0].plot(range(min_clusters, max_clusters+1), sse)
@@ -123,20 +141,20 @@ if __name__ == "__main__":
         #Image merging and showing/storing
         date = datetime.datetime.now()
         dir_name = date.strftime("%c")#.replace(":", "")
-        os.mkdir(base_dir+"/Results/Traditional/"+dir_name)
-        results_path = base_dir+"/Results/Traditional/"+dir_name+"/"
-        os.chdir(results_path)
+        #os.mkdir(base_dir+"/Results/Traditional/"+dir_name)
+        #results_path = base_dir+"/Results/Traditional/"+dir_name+"/"
+        #os.chdir(results_path)
         for cluster_number in range(n_clusters):
-            cluster = tsne_df.loc[tsne_df["ClusterID"]==cluster_number]
+            cluster = results_df.loc[results_df["Cluster"]==cluster_number]
             image_list = []
-            for image_path in cluster["Image Name"]:
+            for image_path in cluster["Name"]:
                 image_list.append(image_path)
-
             column_number = int(np.ceil(np.sqrt(len(image_list))))
-            if len(image_list):
+            if len(image_list) > 0:
+                #print(cluster_number)
                 merged_image = combine_images(columns=column_number, space=10, images=image_list)
-                merged_image.save(str(cluster_number)+".png")
-                #merged_image.show()
+                #merged_image.save(str(cluster_number)+".png")
+                merged_image.show()
         os.chdir(base_dir)
 
 
