@@ -3,17 +3,6 @@ import os
 from PIL import Image
 import cv2 as cv
 
-def crop_square(img, size, interpolation=cv.INTER_AREA):
-    h, w = img.shape[:2]
-    min_size = np.amin([h,w])
-
-    # Centralize and crop
-    crop_img = img[int(h/2-min_size/2):int(h/2+min_size/2), int(w/2-min_size/2):int(w/2+min_size/2)]
-    resized = cv.resize(crop_img, (size, size), interpolation=interpolation)
-
-    return resized
-
-
 def combine_images(columns, space, images):
     rows = len(images) // columns
     if len(images) % columns:
