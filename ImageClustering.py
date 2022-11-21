@@ -8,7 +8,7 @@ import sys
 from sklearn.preprocessing import StandardScaler, normalize
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
-import seaborn as sns
+#import seaborn as sns
 from clusteringAlgorithms import *
 from featureExtraction import *
 from filterCreation import *
@@ -118,14 +118,14 @@ if __name__ == "__main__":
         axes[1].set_ylabel("Silhouette Coefficient")
 
         plt.figure(figsize=(16,10))
-        sns.scatterplot(
-            x="X_tsne", y="Y_tsne",
-            hue="ClusterID",
-            palette=sns.color_palette("hls", 10),
-            data=tsne_df,
-            legend="full",
-            alpha=1
-        )
+        #sns.scatterplot(
+        #    x="X_tsne", y="Y_tsne",
+        #    hue="ClusterID",
+        #    palette=sns.color_palette("hls", 10),
+        #    data=tsne_df,
+        #    legend="full",
+        #    alpha=1
+        #)
         plt.show()
 
 
