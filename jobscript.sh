@@ -14,9 +14,13 @@
 #SBATCH -J FirstCounter        # the jobname (not necessary)
 
 module purge
+module load SciPy-bundle/2022.05-foss-2022a
+module load matplotlib/3.5.2-foss-2022a
+module load OpenCV/4.5.1-fosscuda-2020b-contrib
+module load scikit-learn/1.0.1-foss-2021b
 
 # The rest of this jobscript is handled as a usual bash script that will run
 # on the primary node (in this case there is only one node) of the allocation
 # Here you should make sure to run what you want to be run
 
-python3 ImageCounter.py
+python3 ImageClustering.py /Image_Data/ normalize 244 0.95 1 2 5 1
