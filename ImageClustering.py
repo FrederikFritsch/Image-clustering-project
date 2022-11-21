@@ -4,7 +4,7 @@ import os
 import time
 import matplotlib.pyplot as plt
 import sys
-from kneed import KneeLocator
+#from kneed import KneeLocator
 from sklearn.preprocessing import StandardScaler, normalize
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
@@ -84,7 +84,7 @@ if __name__ == "__main__":
 
     # Cluster number evaluation
 
-    kl = KneeLocator(range(min_clusters, max_clusters+1), sse, curve="convex", direction="decreasing")
+    #kl = KneeLocator(range(min_clusters, max_clusters+1), sse, curve="convex", direction="decreasing")
     #if debug: print(f"Elbow Method returns: {kl.elbow} Clusters")
     #if kl.elbow:
     #    n_clusters = kl.elbow + 1
