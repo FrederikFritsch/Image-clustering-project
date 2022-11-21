@@ -14,10 +14,10 @@
 #SBATCH -J FirstCounter        # the jobname (not necessary)
 
 module purge
-module load SciPy-bundle/2022.05-foss-2022a
-module load matplotlib/3.5.2-foss-2022a
+module load SciPy-bundle/2020.11-fosscuda-2020b
+module load matplotlib/3.3.3-fosscuda-2020b
 module load OpenCV/4.5.1-fosscuda-2020b-contrib
-module load scikit-learn/1.0.1-foss-2021b
+module load scikit-learn/0.23.2-fosscuda-2020b
 
 # The rest of this jobscript is handled as a usual bash script that will run
 # on the primary node (in this case there is only one node) of the allocation
