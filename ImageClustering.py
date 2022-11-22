@@ -36,8 +36,8 @@ if __name__ == "__main__":
     
     take_time = True
     base_dir = os.getcwd()
-    full_data_dir_path = base_dir + data_dir
-    #full_data_dir_path = data_dir
+    #full_data_dir_path = base_dir + data_dir
+    full_data_dir_path = data_dir
 
     all_image_paths = get_image_paths(full_data_dir_path) #Get image paths in data directory
     gabor_filters = create_gabor_filters() # Creates list of Gabor filters
