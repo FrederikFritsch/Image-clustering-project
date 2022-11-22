@@ -146,6 +146,6 @@ if __name__ == "__main__":
 
             merged_image = combine_images(columns=column_number, space=10, images=image_list)
             merged_image.save(str(cluster_number)+".png")
-            #merged_image.show()
+            merged_image.show()
     os.chdir(base_dir)
 

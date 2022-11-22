@@ -3,19 +3,20 @@ import numpy as np
 import cv2 as cv
 import pandas as pd
 from scipy.stats import skew
-
+import matplotlib.pyplot as plt
 
 def traditional_feature_extraction(path, kernels, size = (320, 175)):
     img = cv.imread(path)
 
-    image = cv.resize(img, size, interpolation= cv.INTER_LINEAR)   
+    image = cv.resize(img, size, interpolation= cv.INTER_LINEAR)  
+    #image = cv.cvtColor(image, cv.COLOR_BGR2HSV)
 
     color_distributions = {}
     color_distributions["Name"] = path
     
     #Feature 1: Add color distributions as attributes
     for channel, color in zip(cv.split(image), ["Blue", "Green", "Red"]):
-        histogram, bin_edges = np.histogram(channel, bins = 32, range= (0, 256))
+        histogram, bin_edges = np.histogram(channel, bins = 16, range= (0, 256))
         for index, bin in enumerate(bin_edges[0:-1]):
             color_distributions[color+str(bin)] = histogram[index]
         color_distributions[color+"Mean"] = channel.mean()
@@ -24,7 +25,7 @@ def traditional_feature_extraction(path, kernels, size = (320, 175)):
 
 
     #Convert to grayscale for gabor filters
-    #grey_image = cv.cvtColor(image, cv.COLOR_BGR2GRAY) 
+    grey_image = cv.cvtColor(image, cv.COLOR_BGR2GRAY) 
     #image2 = grey_image.reshape(-1)
     #num = 1
     #gabor_features = {}
@@ -57,18 +58,38 @@ def traditional_feature_extraction(path, kernels, size = (320, 175)):
 
     #Canny edge
     edge_features = {}
-    edge_canny = cv.Canny(grey_image, 200, 300)
-    edge_canny = edge_canny
-    row_sums = np.sum(edge_canny, axis = 0)
-    column_sums = np.sum(edge_canny, axis = 1)
-    for index, row in enumerate(row_sums):
-        edge_features["Row"+str(index)] = row
-    for index, column in enumerate(column_sums):
-        edge_features["Column"+str(index)] = column
-    
+    #edge_canny = cv.Canny(grey_image, 300,500)
+    #plt.imshow(edge_canny)
+    #plt.show()
+    #row_sums = np.sum(edge_canny, axis = 0)
+    #column_sums = np.sum(edge_canny, axis = 1)
+    #for index, row in enumerate(row_sums):
+    #   edge_features["Row"+str(index)] = row
+    #for index, column in enumerate(column_sums):
+    #   edge_features["Column"+str(index)] = column
+
+    alg = cv.ORB_create(nfeatures = 1000)
+    kps = alg.detect(image)
+    n = 10
+    kps = sorted(kps, key=lambda x: -x.response)[:n]
+    # compute descriptor values from keypoints (128 per keypoint)
+    kps, dsc = alg.compute(image, kps)
+    img2 = cv.drawKeypoints(image, kps, None, color=(0,255,0), flags=0)
+    #plt.imshow(img2)
+    #plt.show()
+    vector = dsc.flatten()
+    if vector.size < (n*32):
+       # It can happen that there are simply not enough keypoints in an image, 
+       # in which case you can choose to fill the missing vector values with zeroes
+        vector = np.concatenate([vector, np.zeros(n*32 - vector.size)])
+    #print(vector)
+    orb_descriptors = {}
+    for i in range(len(vector)):
+        orb_descriptors["ORB"+str(i)] = vector[i]
 
     df1 = pd.DataFrame([color_distributions])
     #df2 = pd.DataFrame([gabor_features])
     df3 = pd.DataFrame([edge_features])
-    returndf = df1.join(df3)
+    df4 = pd.DataFrame([orb_descriptors])
+    returndf = df1.join(df3).join(df4)
     return returndf
