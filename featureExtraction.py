@@ -77,7 +77,7 @@ def traditional_feature_extraction(path, kernels, size = (320, 175)):
     img2 = cv.drawKeypoints(image, kps, None, color=(0,255,0), flags=0)
     #plt.imshow(img2)
     #plt.show()
-    vector = dsc.flatten()
+    vector = dsc.reshape(-1)
     if vector.size < (n*32):
        # It can happen that there are simply not enough keypoints in an image, 
        # in which case you can choose to fill the missing vector values with zeroes
