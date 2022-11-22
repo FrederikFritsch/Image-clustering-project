@@ -23,4 +23,4 @@ module load scikit-learn/0.23.2-fosscuda-2020b
 # on the primary node (in this case there is only one node) of the allocation
 # Here you should make sure to run what you want to be run
 
-python3 ImageClustering.py /Image_Data/ normalize 244 0.95 1 2 5 1
+python3 ImageClustering.py /cephyr/NOBACKUP/groups/uu-it-gov/top20/frames/ normalize 244 0.85 1 10 20 1
