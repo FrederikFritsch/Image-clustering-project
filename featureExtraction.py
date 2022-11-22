@@ -74,10 +74,11 @@ def traditional_feature_extraction(path, kernels, size = (320, 175)):
     kps = sorted(kps, key=lambda x: -x.response)[:n]
     # compute descriptor values from keypoints (128 per keypoint)
     kps, dsc = alg.compute(image, kps)
-    img2 = cv.drawKeypoints(image, kps, None, color=(0,255,0), flags=0)
+    #img2 = cv.drawKeypoints(image, kps, None, color=(0,255,0), flags=0)
     #plt.imshow(img2)
     #plt.show()
     vector = dsc.reshape(-1)
+    print(vector.type)
     if vector.size < (n*32):
        # It can happen that there are simply not enough keypoints in an image, 
        # in which case you can choose to fill the missing vector values with zeroes
