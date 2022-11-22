@@ -6,11 +6,12 @@ from scipy.stats import skew
 import matplotlib.pyplot as plt
 
 def traditional_feature_extraction(path, kernels, size = (320, 175)):
+    print(path)
     img = cv.imread(path)
 
     image = cv.resize(img, size, interpolation= cv.INTER_LINEAR)  
     #image = cv.cvtColor(image, cv.COLOR_BGR2HSV)
-
+    print(image.shape)
     color_distributions = {}
     color_distributions["Name"] = path
     
@@ -74,10 +75,15 @@ def traditional_feature_extraction(path, kernels, size = (320, 175)):
     kps = sorted(kps, key=lambda x: -x.response)[:n]
     # compute descriptor values from keypoints (128 per keypoint)
     kps, dsc = alg.compute(image, kps)
-    img2 = cv.drawKeypoints(image, kps, None, color=(0,255,0), flags=0)
+    #print(f"KPS: {kps}")
+    #print(f"DSC: {dsc}")
+    #img2 = cv.drawKeypoints(image, kps, None, color=(0,255,0), flags=0)
     #plt.imshow(img2)
     #plt.show()
-    vector = dsc.reshape(-1)
+    try:
+        vector = dsc.reshape(-1)
+    except:
+        vector = np.zeros(n*32)
     if vector.size < (n*32):
        # It can happen that there are simply not enough keypoints in an image, 
        # in which case you can choose to fill the missing vector values with zeroes
