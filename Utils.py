@@ -36,9 +36,12 @@ def combine_images(columns, space, images):
 
 def get_image_paths(full_data_dir_path):
     all_paths = []
+    
     for index, directories in enumerate(os.walk(full_data_dir_path)):
         for sample in directories[2]:
-            if sample.endswith('.png'):
-                full_path = directories[0] + "/" + sample
-                all_paths.append(full_path)
+            if len(all_paths) < 200:
+                if sample.endswith('.png'):
+                    full_path = directories[0] + "/" + sample
+                    all_paths.append(full_path)
+    print(len(all_paths))
     return all_paths
