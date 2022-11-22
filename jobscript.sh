@@ -9,9 +9,9 @@
 
 #SBATCH -A SNIC2021-7-164      # find your project with the "projinfo" command
 #SBATCH -p alvis               # what partition to use (usually not necessary)
-#SBATCH -t 0-00:01:00          # how long time it will take to run
-#SBATCH --gpus-per-node=A40:1  # choosing no. GPUs and their type
-#SBATCH -J FirstCounter        # the jobname (not necessary)
+#SBATCH -t 0-04:00:00          # how long time it will take to run
+#SBATCH --gpus-per-node=A40:4  # choosing no. GPUs and their type
+#SBATCH -J FirstRun        # the jobname (not necessary)
 
 module purge
 module load SciPy-bundle/2020.11-fosscuda-2020b
@@ -23,4 +23,4 @@ module load scikit-learn/0.23.2-fosscuda-2020b
 # on the primary node (in this case there is only one node) of the allocation
 # Here you should make sure to run what you want to be run
 
-python3 ImageClustering.py /cephyr/NOBACKUP/groups/uu-it-gov/top20/frames/ normalize 244 0.85 1 10 20 1
+python3 ImageClustering.py /cephyr/NOBACKUP/groups/uu-it-gov/top20/frames/ normalize 244 0.85 1 30 50 1

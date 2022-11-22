@@ -6,12 +6,12 @@ from scipy.stats import skew
 import matplotlib.pyplot as plt
 
 def traditional_feature_extraction(path, kernels, size = (320, 175)):
-    print(path)
+    #print(path)
     img = cv.imread(path)
 
     image = cv.resize(img, size, interpolation= cv.INTER_LINEAR)  
     #image = cv.cvtColor(image, cv.COLOR_BGR2HSV)
-    print(image.shape)
+    #print(image.shape)
     color_distributions = {}
     color_distributions["Name"] = path
     
