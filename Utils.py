@@ -1,7 +1,12 @@
 import numpy as np
 import os
 from PIL import Image
-import cv2 as cv
+
+
+def saveFeaturesInCSV(folder, filename, features):
+    os.makedirs(f'{folder}{filename}', exist_ok=True)
+    features.to_csv(f'{folder}{filename}/{filename}.csv')
+
 
 def combine_images(columns, space, images):
     rows = len(images) // columns
@@ -19,7 +24,8 @@ def combine_images(columns, space, images):
     #print(width_max, height_max)
     background_width = width_max*columns + (space*columns)-space
     background_height = height_max*rows + (space*rows)-space
-    background = Image.new('RGBA', (background_width, background_height), (255, 255, 255, 255))
+    background = Image.new(
+        'RGBA', (background_width, background_height), (255, 255, 255, 255))
     x = 0
     y = 0
     for i, image in enumerate(images):
@@ -34,13 +40,14 @@ def combine_images(columns, space, images):
         img.close()
     return background
 
+
 def get_image_paths(data_path):
     all_paths = []
     print("Getting paths")
     for index, directories in enumerate(os.walk(data_path)):
-        #print(directories)
+        # print(directories)
         for sample in directories[2]:
-            #print(sample)
+            # print(sample)
             if sample.endswith('.png'):
                 full_path = directories[0] + "/" + sample
                 all_paths.append(full_path)
@@ -48,18 +55,17 @@ def get_image_paths(data_path):
     return all_paths
 
 
-import numpy as np
-import cv2 as cv
-
-def create_gabor_filters(kernelsize = [10], thetarotations = 2, sigmas = [3], lamdas = [2.*np.pi], gammas = [0.4]):
+def create_gabor_filters(kernelsize=[10], thetarotations=2, sigmas=[3], lamdas=[2.*np.pi], gammas=[0.4]):
+    import cv2 as cv
     kernels = []
-    for ksize in kernelsize:  
+    for ksize in kernelsize:
         for theta in range(thetarotations):        # Thetarotations
             theta = theta / float(thetarotations) * np.pi
             for sigma in sigmas:                   # SIGMA with 1 and 3
                 for lamda in lamdas:               # range of wavelengths
                     for gamma in gammas:           # GAMMA values of 0.05 and 0.5
                         phi = 0
-                        kernel = cv.getGaborKernel((ksize,ksize), sigma, theta, lamda, gamma, phi, ktype=cv.CV_32F)
+                        kernel = cv.getGaborKernel(
+                            (ksize, ksize), sigma, theta, lamda, gamma, phi, ktype=cv.CV_32F)
                         kernels.append(kernel)
     return kernels
