@@ -14,6 +14,7 @@
 #SBATCH -J FirstCounter        # the jobname (not necessary)
 
 module purge
+module load TensorFlow/2.5.0-fosscuda-2020b
 
 # The rest of this jobscript is handled as a usual bash script that will run
 # on the primary node (in this case there is only one node) of the allocation
