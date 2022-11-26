@@ -11,7 +11,6 @@ from sklearn.manifold import TSNE
 #import seaborn as sns
 from clusteringAlgorithms import *
 from featureExtraction import *
-from filterCreation import *
 from Utils import *
 import datetime
 
@@ -146,7 +145,7 @@ if __name__ == "__main__":
         if len(image_list) > 0:
 
             merged_image = combine_images(columns=column_number, space=10, images=image_list)
-            merged_image.save(str(cluster_number)+".png")
+            #merged_image.save(str(cluster_number)+".png")
             merged_image.show()
     os.chdir(base_dir)
 
