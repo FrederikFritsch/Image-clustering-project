@@ -1,4 +1,3 @@
-from keras.applications.vgg16 import preprocess_input
 import enum
 import numpy as np
 import pandas as pd

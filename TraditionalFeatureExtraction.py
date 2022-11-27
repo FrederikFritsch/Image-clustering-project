@@ -3,9 +3,8 @@ import pandas as pd
 import os
 import time
 import sys
-from clusteringAlgorithms import *
-from featureExtraction import traditional_feature_extraction
-from Utils import *
+from src.featureExtraction import traditional_feature_extraction
+from src.Utils import *
 import datetime
 
 
@@ -50,5 +49,5 @@ if __name__ == "__main__":
             f"Time elapsed to extract features of {len(all_image_paths)} Images: {endtime-starttime}")
 
     saveFeaturesInCSV("Results/Traditional/", filename, df)
-    os.makedirs(f'Results/Traditional/{filename}', exist_ok=True)
-    df.to_csv(f'Results/Traditional/{filename}/{filename}.csv')
+    #os.makedirs(f'Results/Traditional/{filename}', exist_ok=True)
+    #df.to_csv(f'Results/Traditional/{filename}/{filename}.csv')

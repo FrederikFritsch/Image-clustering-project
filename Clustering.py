@@ -5,9 +5,9 @@ import time
 import sys
 from sklearn.preprocessing import StandardScaler, normalize
 from sklearn.decomposition import PCA
-from clusteringAlgorithms import *
-from featureExtraction import *
-from Utils import *
+from src.clusteringAlgorithms import *
+from src.featureExtraction import *
+from src.Utils import *
 
 
 if __name__ == "__main__":

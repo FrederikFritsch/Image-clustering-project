@@ -1,9 +1,9 @@
 import sys
-from Utils import *
+from src.Utils import *
 import pandas as pd
 from keras.applications.vgg16 import VGG16
 from keras.models import Model
-from featureExtraction import *
+from src.featureExtraction import *
 
 if __name__ == "__main__":
     args = sys.argv[1:]
