@@ -2,10 +2,10 @@ import enum
 import numpy as np
 import pandas as pd
 from scipy.stats import skew
-import matplotlib.pyplot as plt
 
 
 def traditional_feature_extraction(path, kernels, size=(320, 175)):
+    import matplotlib.pyplot as plt
     import cv2 as cv
     # print(path)
     img = cv.imread(path)

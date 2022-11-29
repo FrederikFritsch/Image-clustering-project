@@ -1,6 +1,5 @@
 import numpy as np
 import os
-from PIL import Image
 
 
 def saveFeaturesInCSV(folder, filename, features):
@@ -9,6 +8,7 @@ def saveFeaturesInCSV(folder, filename, features):
 
 
 def combine_images(columns, space, images):
+    from PIL import Image
     rows = len(images) // columns
     if len(images) % columns:
         rows += 1
