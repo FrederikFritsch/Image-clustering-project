@@ -5,8 +5,6 @@ import time
 import sys
 from src.featureExtraction import traditional_feature_extraction
 from src.Utils import *
-import datetime
-
 
 if __name__ == "__main__":
     args = sys.argv[1:]
@@ -39,9 +37,6 @@ if __name__ == "__main__":
             path, gabor_filters, image_size)
         dataframe_list.append(dataframe)
     df = pd.concat(dataframe_list, ignore_index=True)
-    # print(df.info())
-    # print(df.head())
-    # print(df.describe())
     if take_time:
         endtime = time.time()  # Stop time
     if take_time:
@@ -49,5 +44,4 @@ if __name__ == "__main__":
             f"Time elapsed to extract features of {len(all_image_paths)} Images: {endtime-starttime}")
 
     saveFeaturesInCSV("Results/Traditional/", filename, df)
-    #os.makedirs(f'Results/Traditional/{filename}', exist_ok=True)
-    #df.to_csv(f'Results/Traditional/{filename}/{filename}.csv')
+

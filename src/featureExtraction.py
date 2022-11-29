@@ -69,18 +69,19 @@ def traditional_feature_extraction(path, kernels, size=(320, 175)):
     # for index, column in enumerate(column_sums):
     #   edge_features["Column"+str(index)] = column
 
-    alg = cv.ORB_create(nfeatures=1000)
+    alg = cv.ORB_create(nfeatures=5000)
     kps = alg.detect(image)
-    n = 10
+    n = 50
     kps = sorted(kps, key=lambda x: -x.response)[:n]
+    
     # compute descriptor values from keypoints (128 per keypoint)
     kps, dsc = alg.compute(image, kps)
 
     #print(f"KPS: {kps}")
     #print(f"DSC: {dsc}")
-    #img2 = cv.drawKeypoints(image, kps, None, color=(0,255,0), flags=0)
-    # plt.imshow(img2)
-    # plt.show()
+    img2 = cv.drawKeypoints(image, kps, None, color=(0,255,0), flags=0)
+    cv.imshow("Keypoints",img2)
+    cv.waitKey(0)
     try:
         vector = dsc.reshape(-1)
     except:
