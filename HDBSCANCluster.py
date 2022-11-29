@@ -39,6 +39,9 @@ if __name__ == "__main__":
 
     # Here you need to add your code
     # E.g normalizing, clustering, pca, evaluation etc
+    print("I will have a try today!")
+    print("just to test whether I really know how to connect to Github when I work alone")
+
 
 
     os.makedirs(f'{resultspath}', exist_ok=True)  
