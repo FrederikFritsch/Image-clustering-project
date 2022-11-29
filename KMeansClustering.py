@@ -57,7 +57,7 @@ if __name__ == "__main__":
 
     # Clustering
     sse, score, silhouette_coefficients, labels = perform_KMeans(features_pca_df, min_clusters, max_clusters)
-
+    
 
     # Cluster number evaluation
 
