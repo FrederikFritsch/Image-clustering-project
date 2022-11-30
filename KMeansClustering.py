@@ -3,7 +3,7 @@ import pandas as pd
 import os
 import time
 import sys
-from sklearn.preprocessing import StandardScaler, normalize
+from sklearn.preprocessing import StandardScaler, normalize, MinMaxScaler
 from sklearn.decomposition import PCA
 from src.clusteringAlgorithms import *
 from src.featureExtraction import *
@@ -33,7 +33,7 @@ if __name__ == "__main__":
     except Exception as e:
         print(e)
         quit()
-    print(df)
+    #print(df)
     # Feature normalization
     features_df = df.loc[:, df.columns[1:]]
     image_names_df = df.loc[:, ['Name']]
@@ -41,16 +41,17 @@ if __name__ == "__main__":
 
     if normalization_method == "normalize":
         print("Normalizing")
-        features_df = normalize(features_df)
+        scaler = MinMaxScaler()
+        features_df = scaler.fit_transform(features_df)
     else:
         scaler = StandardScaler()
         print("Standardizing")
         #scaler.fit(features_df)
         features_df = scaler.fit_transform(features_df)
-    
+    print(features_df)
     # Dimensionality reduction
     pca = PCA(pca_variance)
-
+    
     features_pca_df = pca.fit_transform(features_df)
 
     print(f"Explained components: {pca.explained_variance_ratio_}")
@@ -68,19 +69,19 @@ if __name__ == "__main__":
     cluster_labels = pd.DataFrame(labels[lables_index], columns=["Cluster"])
 
     results_df = pd.concat([image_names_df, cluster_labels], axis=1)
-    print(results_df)
+    #print(results_df)
 
     # Only Plotting below this line
 
-    fig, axes = plt.subplots(2, 1)
-    plt.style.use("fivethirtyeight")
-    axes[0].plot(range(min_clusters, max_clusters+1), sse)
-    axes[0].set_xlabel("Number of Clusters")
-    axes[0].set_ylabel("SSE")
-    axes[1].plot(range(min_clusters, max_clusters+1), silhouette_coefficients)
-    axes[1].set_xlabel("Number of Clusters")
-    axes[1].set_ylabel("Silhouette Coefficient")
-    plt.figure(figsize=(16,10))
+    #fig, axes = plt.subplots(2, 1)
+    #plt.style.use("fivethirtyeight")
+    #axes[0].plot(range(min_clusters, max_clusters+1), sse)
+    #axes[0].set_xlabel("Number of Clusters")
+    #axes[0].set_ylabel("SSE")
+    #axes[1].plot(range(min_clusters, max_clusters+1), silhouette_coefficients)
+    #axes[1].set_xlabel("Number of Clusters")
+    #axes[1].set_ylabel("Silhouette Coefficient")
+    #plt.figure(figsize=(16,10))
 
     os.makedirs(f'{resultspath}', exist_ok=True)  
     results_df.to_csv(f'{resultspath}/ClusterResults.csv') 
