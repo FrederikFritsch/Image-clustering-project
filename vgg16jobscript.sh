@@ -19,8 +19,8 @@ module load Pillow-SIMD/8.3.1-GCCcore-11.2.0
 # The rest of this jobscript is handled as a usual bash script that will run
 # on the primary node (in this case there is only one node) of the allocation
 # Here you should make sure to run what you want to be run
-#PATH = /cephyr/NOBACKUP/groups/uu-it-gov/top20/frames/
-PATH = Image_Data/
+#PATH = "/cephyr/NOBACKUP/groups/uu-it-gov/top20/frames/"
+PATH = "Image_Data/"
 
 python3 NeuralNetworkFeatureExtraction.py $PATH DNN-VGG16-1 244
 
