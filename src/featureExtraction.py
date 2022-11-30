@@ -83,14 +83,14 @@ def traditional_feature_extraction(path, kernels, size=(244, 244)):
         x, y = point.pt
         keypoint_matrix[round(x)][round(y)] = point.size
 
-    plt.imshow(keypoint_matrix.transpose(), cmap='hot', interpolation='nearest')
+    #plt.imshow(keypoint_matrix.transpose(), cmap='hot', interpolation='nearest')
     
     #print(f"KPS: {kps}")
     #print(f"DSC: {dsc}")
-    img2 = cv.drawKeypoints(image, kps, None, color=(0,255,0), flags=0)
-    cv.imshow("Keypoints",img2)
-    plt.show()
-    cv.waitKey(0)
+    #img2 = cv.drawKeypoints(image, kps, None, color=(0,255,0), flags=0)
+    #cv.imshow("Keypoints",img2)
+    #plt.show()
+    #cv.waitKey(0)
     try:
         vector = dsc.reshape(-1)
     except:
