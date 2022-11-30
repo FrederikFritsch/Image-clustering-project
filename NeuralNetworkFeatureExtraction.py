@@ -18,7 +18,6 @@ if __name__ == "__main__":
         print(e)
         quit()
 all_image_paths = get_image_paths(data_path)
-
 model = VGG16()
 model = Model(inputs=model.inputs, outputs=model.layers[-2].output)
 

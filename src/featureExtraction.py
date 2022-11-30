@@ -104,9 +104,9 @@ def traditional_feature_extraction(path, kernels, size=(320, 175)):
 
 
 def dnn_feature_exctration(file, model):
-    from keras.utils import load_img
-    from keras.applications.vgg16 import preprocess_input
-
+    from tensorflow.keras.utils import load_img
+    from tensorflow.keras.applications.vgg16 import preprocess_input
+    from PIL import Image
     # load the image as a 224x224 array
     img = load_img(file, target_size=(224, 224))
     # convert from 'PIL.Image.Image' to numpy array
