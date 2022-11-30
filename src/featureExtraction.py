@@ -2,28 +2,29 @@ import enum
 import numpy as np
 import pandas as pd
 from scipy.stats import skew
+import sys
 
-
-def traditional_feature_extraction(path, kernels, size=(320, 175)):
+def traditional_feature_extraction(path, kernels, size=(244, 244)):
     import matplotlib.pyplot as plt
     import cv2 as cv
     # print(path)
     img = cv.imread(path)
-
+    size = (640, 350)
     image = cv.resize(img, size, interpolation=cv.INTER_LINEAR)
+    image = cv.blur(image,(10,10)) 
     #image = cv.cvtColor(image, cv.COLOR_BGR2HSV)
     # print(image.shape)
     color_distributions = {}
     color_distributions["Name"] = path
 
     # Feature 1: Add color distributions as attributes
-    for channel, color in zip(cv.split(image), ["Blue", "Green", "Red"]):
-        histogram, bin_edges = np.histogram(channel, bins=16, range=(0, 256))
-        for index, bin in enumerate(bin_edges[0:-1]):
-            color_distributions[color+str(bin)] = histogram[index]
-        color_distributions[color+"Mean"] = channel.mean()
-        color_distributions[color+"Std"] = channel.std()
-        color_distributions[color+"Skewness"] = skew(channel.reshape(-1))
+    #for channel, color in zip(cv.split(image), ["Blue", "Green", "Red"]):
+    #    histogram, bin_edges = np.histogram(channel, bins=16, range=(0, 256))
+    #    for index, bin in enumerate(bin_edges[0:-1]):
+    #        color_distributions[color+str(bin)] = histogram[index]
+    #    color_distributions[color+"Mean"] = channel.mean()
+    #    color_distributions[color+"Std"] = channel.std()
+    #    color_distributions[color+"Skewness"] = skew(channel.reshape(-1))
 
     # Convert to grayscale for gabor filters
     grey_image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
@@ -60,27 +61,36 @@ def traditional_feature_extraction(path, kernels, size=(320, 175)):
     # Canny edge
     edge_features = {}
     #edge_canny = cv.Canny(grey_image, 300,500)
-    # plt.imshow(edge_canny)
-    # plt.show()
+    #plt.imshow(edge_canny)
+    #plt.show()
     #row_sums = np.sum(edge_canny, axis = 0)
     #column_sums = np.sum(edge_canny, axis = 1)
-    # for index, row in enumerate(row_sums):
-    #   edge_features["Row"+str(index)] = row
-    # for index, column in enumerate(column_sums):
-    #   edge_features["Column"+str(index)] = column
+    #for index, row in enumerate(row_sums):
+    #    edge_features["Row"+str(index)] = row
+    #for index, column in enumerate(column_sums):
+    #    edge_features["Column"+str(index)] = column
 
-    alg = cv.ORB_create(nfeatures=1000)
+    alg = cv.ORB_create(nfeatures=5000)
     kps = alg.detect(image)
-    n = 10
+    n = 500
     kps = sorted(kps, key=lambda x: -x.response)[:n]
+    keypoint_matrix = np.zeros(size)
+
     # compute descriptor values from keypoints (128 per keypoint)
     kps, dsc = alg.compute(image, kps)
+    
+    for point in kps:
+        x, y = point.pt
+        keypoint_matrix[round(x)][round(y)] = point.size
 
+    plt.imshow(keypoint_matrix.transpose(), cmap='hot', interpolation='nearest')
+    
     #print(f"KPS: {kps}")
     #print(f"DSC: {dsc}")
-    #img2 = cv.drawKeypoints(image, kps, None, color=(0,255,0), flags=0)
-    # plt.imshow(img2)
-    # plt.show()
+    img2 = cv.drawKeypoints(image, kps, None, color=(0,255,0), flags=0)
+    cv.imshow("Keypoints",img2)
+    plt.show()
+    cv.waitKey(0)
     try:
         vector = dsc.reshape(-1)
     except:
