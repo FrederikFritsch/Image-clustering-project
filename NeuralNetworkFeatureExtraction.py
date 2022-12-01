@@ -4,6 +4,7 @@ import pandas as pd
 from keras.applications.vgg16 import VGG16
 from keras.models import Model
 from src.featureExtraction import *
+import time
 
 if __name__ == "__main__":
     args = sys.argv[1:]
@@ -20,6 +21,7 @@ if __name__ == "__main__":
 all_image_paths = get_image_paths(data_path)
 model = VGG16()
 model = Model(inputs=model.inputs, outputs=model.layers[-2].output)
+starttime = time.time() 
 
 df = pd.DataFrame()
 for path in all_image_paths:
@@ -28,4 +30,6 @@ for path in all_image_paths:
     feat.insert(0, "Name", path)
     df = pd.concat([df, feat], ignore_index=True)
 
+endtime = time.time() 
+print(f"Time elapsed to extract features of {len(all_image_paths)} Images: {endtime-starttime}")
 saveFeaturesInCSV("Results/DNN/", filename, df)
