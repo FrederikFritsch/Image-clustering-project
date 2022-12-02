@@ -19,6 +19,7 @@ if __name__ == "__main__":
         print("Missing arguments")
     try:
         filepath = str(args[0])
+        dir = str(args[1])
     except Exception as e:
         print("Wrong usage of arguments.")
         print(e)
@@ -75,14 +76,16 @@ if __name__ == "__main__":
     #Image merging and showing/storing
     date = datetime.datetime.now()
     dir_name = date.strftime("%c")#.replace(":", "")
+    basedir = os.getcwd()+"/"
+    os.chdir(basedir+dir)
     for cluster_number in range(n_clusters):
         cluster = df.loc[df["Cluster"]==cluster_number]
         image_list = []
         for image_path in cluster["Name"]:
-            image_list.append(image_path)
+            image_list.append(basedir+image_path)
         column_number = int(np.ceil(np.sqrt(len(image_list))))
         if len(image_list) > 0:
 
             merged_image = combine_images(columns=column_number, space=10, images=image_list)
-            #merged_image.save(str(cluster_number)+".png")
+            merged_image.save(str(cluster_number)+".png")
             merged_image.show()

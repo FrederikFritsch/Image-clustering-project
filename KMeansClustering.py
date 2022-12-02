@@ -46,7 +46,6 @@ if __name__ == "__main__":
     else:
         scaler = StandardScaler()
         print("Standardizing")
-        #scaler.fit(features_df)
         features_df = scaler.fit_transform(features_df)
     print(features_df)
     # Dimensionality reduction
