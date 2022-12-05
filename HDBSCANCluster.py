@@ -57,9 +57,12 @@ if __name__ == "__main__":
     features_pca_df = pca.fit_transform(features_df)
     print(f"Explained components: {pca.explained_variance_ratio_}")
     # Clustering algorithm from file "clusteringAlgorithms.py"
-    sse, score, silhouette_coefficients, labels = perform_HDBSCAN(features_pca_df, min_cluster_size, max_cluster_size)
-    
-   
+    sse, score, silhouette_coefficients, labels = perform_HDBSCAN(features_pca_df, min_clusters, max_clusters)
+    print(labels)
+    results_df = image_names_df
+    results_df["Cluster"] = pd.DataFrame(labels)
+    #cluster_labels= pd.DataFrame(labels, columns=["Cluster"])
+    #results_df = pd.concat([image_names_df, labels], axis=1)
 
     os.makedirs(f'{resultspath}', exist_ok=True)  
-    #results_df.to_csv(f'{resultspath}/HDBSCANResults.csv') 
+    results_df.to_csv(f'{resultspath}/HDBSCANResults.csv') 

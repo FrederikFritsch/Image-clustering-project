@@ -7,7 +7,7 @@ from scipy.stats import skew
 import sys
 from skimage import feature
 
-def ROI_feature_extraction(feature_vector, image):
+def ROI_color_feature_extraction(feature_vector, image):
     import cv2 as cv
     grey_image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
     blurred_image = cv.GaussianBlur(grey_image,(15,15), 0)
@@ -33,7 +33,7 @@ def ROI_feature_extraction(feature_vector, image):
 
 def binaryPatterns(image, numPoints, radius):
     eps = 1e-7
-    print("Inside")
+    #print("Inside")
     lbp = feature.local_binary_pattern(image, numPoints, radius, method="uniform")
     (hist, _) = np.histogram(lbp.ravel(), bins=np.arange(0, numPoints+3), range=(0, numPoints +2))
     hist= hist.astype("float")
@@ -53,11 +53,11 @@ def traditional_feature_extraction(path, kernels, size=(244, 244)):
     name_df = {}
     name_df["Name"] = path
     feature_vector = {}
-    feature_vector = ROI_feature_extraction(feature_vector, image)
+    feature_vector = ROI_color_feature_extraction(feature_vector, image)
 
-    print("Calling Function")
+    #print("Calling Function")
     LBPhist = binaryPatterns(grey_image,24, 8)
-    print(LBPhist)
+    #print(LBPhist)
     #cv.imshow("Original", image)
     #cv.imshow("Grey", grey_image)
     #
@@ -108,9 +108,13 @@ def traditional_feature_extraction(path, kernels, size=(244, 244)):
     #    #cv.waitKey(0)
 
     # Canny edge
-    edge_canny = cv.Canny(grey_image, 300,500)
-    plt.imshow(edge_canny)
-    plt.show()
+    sigma = 0.3
+    median = np.median(image)
+    lower = int(max(0, (1.0-sigma)*median))
+    upper = int(min(255, (1.0+sigma)*median))
+    edge_canny = cv.Canny(grey_image, lower,upper)
+    #plt.imshow(edge_canny)
+    #plt.show()
     row_sums = np.sum(edge_canny, axis = 0)
     column_sums = np.sum(edge_canny, axis = 1)
     for index, row in enumerate(row_sums):

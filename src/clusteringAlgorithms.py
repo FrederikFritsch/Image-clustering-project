@@ -29,11 +29,11 @@ def perform_DBSCAN(data, min_cluster_size, max_cluster_size):
 
     #sse = []
     silhouette_coefficients = []
-    labels = []
+    #labels = []
     #not allow unclustered points
-    clusterer = hdbscan.HDBSCAN(cluster_selection_epsilon = 0.00001)
+    clusterer = hdbscan.HDBSCAN(algorithm='best', alpha=1.0, approx_min_span_tree=True, gen_min_span_tree=False, leaf_size=5, metric='euclidean', min_cluster_size=5, min_samples=None, p=None)#cluster_selection_epsilon = 0.00001)
     clusterer.fit(data)
-    print(clusterer.labels_)   # the labels of the clusters are [-1, -1, -1, .... -1]
+    print(f"Cluster Lables: {clusterer.labels_}")   # the labels of the clusters are [-1, -1, -1, .... -1]
     
     #sse.append(0)       # DBSCAN doesn't contain "inertia_"
     score = silhouette_score(data, clusterer.labels_)
@@ -55,8 +55,10 @@ def perform_HDBSCAN(data, min_cluster_size, max_cluster_size):
     
     #sse.append(0)       # HDBSCAN doesn't contain "inertia_"
     score = silhouette_score(data, clusterer.labels_)
+    #sse.append(0)
+    score = 0#silhouette_score(data, clusterer.labels_)
     silhouette_coefficients.append(score)
-    labels.append(clusterer.labels_)
+    labels = clusterer.labels_
 
     
     return score, silhouette_coefficients, labels
