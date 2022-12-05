@@ -1,6 +1,5 @@
 from sklearn.cluster import KMeans, DBSCAN
 from sklearn.metrics import silhouette_score
-import hdbscan
 
 def perform_KMeans(data, min_clusters, max_clusters):
     # --------- CALCULATE K-MEANS CLUSTERS ------------
@@ -18,6 +17,7 @@ def perform_KMeans(data, min_clusters, max_clusters):
 
 
 def perform_DBSCAN(data, min_cluster_size, max_cluster_size):
+    import hdbscan
     print(data)
     # --------- CALCULATE DBSCAN CLUSTERS ------------
 
@@ -43,6 +43,7 @@ def perform_DBSCAN(data, min_cluster_size, max_cluster_size):
 
 
 def perform_HDBSCAN(data, min_cluster_size, max_cluster_size):
+    import hdbscan
     print(data)
     # --------- CALCULATE HDBSCAN CLUSTERS ------------
     #sse = []
