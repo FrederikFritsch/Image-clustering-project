@@ -113,8 +113,8 @@ def traditional_feature_extraction(path, kernels, size=(244, 244)):
     lower = int(max(0, (1.0-sigma)*median))
     upper = int(min(255, (1.0+sigma)*median))
     edge_canny = cv.Canny(grey_image, lower,upper)
-    plt.imshow(edge_canny)
-    plt.show()
+    #plt.imshow(edge_canny)
+    #plt.show()
     row_sums = np.sum(edge_canny, axis = 0)
     column_sums = np.sum(edge_canny, axis = 1)
     for index, row in enumerate(row_sums):
