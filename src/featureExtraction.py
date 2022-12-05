@@ -33,7 +33,7 @@ def ROI_color_feature_extraction(feature_vector, image):
 
 def binaryPatterns(image, numPoints, radius):
     eps = 1e-7
-    print("Inside")
+    #print("Inside")
     lbp = feature.local_binary_pattern(image, numPoints, radius, method="uniform")
     (hist, _) = np.histogram(lbp.ravel(), bins=np.arange(0, numPoints+3), range=(0, numPoints +2))
     hist= hist.astype("float")
@@ -55,9 +55,9 @@ def traditional_feature_extraction(path, kernels, size=(244, 244)):
     feature_vector = {}
     feature_vector = ROI_color_feature_extraction(feature_vector, image)
 
-    print("Calling Function")
+    #print("Calling Function")
     LBPhist = binaryPatterns(grey_image,24, 8)
-    print(LBPhist)
+    #print(LBPhist)
     #cv.imshow("Original", image)
     #cv.imshow("Grey", grey_image)
     #
