@@ -7,7 +7,7 @@ from scipy.stats import skew
 import sys
 from skimage import feature
 
-def ROI_feature_extraction(feature_vector, image):
+def ROI_color_feature_extraction(feature_vector, image):
     import cv2 as cv
     grey_image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
     blurred_image = cv.GaussianBlur(grey_image,(15,15), 0)
@@ -53,7 +53,7 @@ def traditional_feature_extraction(path, kernels, size=(244, 244)):
     name_df = {}
     name_df["Name"] = path
     feature_vector = {}
-    feature_vector = ROI_feature_extraction(feature_vector, image)
+    feature_vector = ROI_color_feature_extraction(feature_vector, image)
 
     print("Calling Function")
     LBPhist = binaryPatterns(grey_image,24, 8)
@@ -108,7 +108,11 @@ def traditional_feature_extraction(path, kernels, size=(244, 244)):
     #    #cv.waitKey(0)
 
     # Canny edge
-    edge_canny = cv.Canny(grey_image, 300,500)
+    sigma = 0.3
+    median = np.median(image)
+    lower = int(max(0, (1.0-sigma)*median))
+    upper = int(min(255, (1.0+sigma)*median))
+    edge_canny = cv.Canny(grey_image, lower,upper)
     plt.imshow(edge_canny)
     plt.show()
     row_sums = np.sum(edge_canny, axis = 0)
