@@ -18,7 +18,6 @@ def perform_KMeans(data, min_clusters, max_clusters):
 
 
 def perform_DBSCAN(data, min_cluster_size, max_cluster_size):
-    import hdbscan
     import numpy as np
     print(data)
     # --------- CALCULATE DBSCAN CLUSTERS ------------
