@@ -33,7 +33,19 @@ def ROI_color_feature_extraction(feature_vector, image):
     return feature_vector
 
 
-def binaryPatterns(image, numPoints, radius):
+def color_feature_extraction(feature_vector, image):
+    import cv2 as cv
+    # Feature: Add color distributions and color moments as attributes
+    for channel, color in zip(cv.split(image), ["Blue", "Green", "Red"]):
+        histogram, bin_edges = np.histogram(channel, bins=16, range=(0, 256))
+        for index, bin in enumerate(bin_edges[0:-1]):
+            feature_vector[color+str(bin)] = histogram[index]
+        feature_vector[color+"Mean"] = channel.mean()
+        feature_vector[color+"Std"] = channel.std()
+        feature_vector[color+"Skewness"] = skew(channel.reshape(-1))
+    return feature_vector
+
+def binaryPatterns(feature_vector, image, numPoints, radius):
     from skimage import feature
     eps = 1e-7
     # print("Inside")
@@ -43,77 +55,14 @@ def binaryPatterns(image, numPoints, radius):
         0, numPoints+3), range=(0, numPoints + 2))
     hist = hist.astype("float")
     hist /= (hist.sum()+eps)
-    return hist
+    for index, val in enumerate(hist):
+        feature_vector["BP"+str(index)] = val
+    return feature_vector
 
-
-def traditional_feature_extraction(path, kernels, size=(244, 244)):
-    import matplotlib.pyplot as plt
+def canny_edge_feature_extraction(feature_vector, grey_image):
     import cv2 as cv
-    # print(path)
-    img = cv.imread(path)
-    size = (640, 350)
-    image = cv.resize(img, size, interpolation=cv.INTER_LINEAR)
-    original = image.copy()
-    grey_image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
-    name_df = {}
-    name_df["Name"] = path
-    feature_vector = {}
-    feature_vector = ROI_color_feature_extraction(feature_vector, image)
-
-    #print("Calling Function")
-    LBPhist = binaryPatterns(grey_image, 24, 8)
-    # print(LBPhist)
-    #cv.imshow("Original", image)
-    #cv.imshow("Grey", grey_image)
-    #
-
-    #image = cv.cvtColor(image, cv.COLOR_BGR2HSV)
-    # print(image.shape)
-
-    # Feature 1: Add color distributions as attributes
-    # for channel, color in zip(cv.split(image), ["Blue", "Green", "Red"]):
-    #    histogram, bin_edges = np.histogram(channel, bins=16, range=(0, 256))
-    #    for index, bin in enumerate(bin_edges[0:-1]):
-    #        feature_vector[color+str(bin)] = histogram[index]
-    #    feature_vector[color+"Mean"] = channel.mean()
-    #    feature_vector[color+"Std"] = channel.std()
-    #    feature_vector[color+"Skewness"] = skew(channel.reshape(-1))
-
-    # Convert to grayscale for gabor filters
-
-    #image2 = grey_image.reshape(-1)
-    #num = 1
-    #gabor_features = {}
-#
-    # for kernel in kernels:
-    #    gabor_label = 'Gabor' + str(num)
-    #    fimg = cv.filter2D(image2, cv.CV_8UC3, kernel)
-    #    filtered_image = np.array(fimg.reshape(-1))
-#
-    #    #Calculate mean and std
-    #    mean = sum(filtered_image)/len(filtered_image)
-    #    std = np.std(filtered_image)
-#
-    #    #Add mean and std to feature vector
-    #    gabor_mean_label = gabor_label + "Mean"
-    #    gabor_std_label = gabor_label + "Std"
-#
-    #    feature_vector[gabor_mean_label] = mean
-    #    feature_vector[gabor_std_label] = std
-    #    num += 1
-#
-    #    #df[gabor_label] = filtered_image
-    #    #print(gabor_label, mean, std)
-    #    kernel_resized = cv.resize(kernel, (400, 400))
-    #    #cv.imshow("Kernel: Theta " + str(theta) +" Sigma "+ str(sigma) +" Lamda "+ str(lamda) +" Gamma "+ str(gamma), kernel_resized)
-    #    #cv.imshow("Kernel", kernel_resized)
-    #    #cv.imshow("Original img", image)
-    #    #cv.imshow("Filtered", filtered_image.reshape(grey_image.shape))
-    #    #cv.waitKey(0)
-
-    # Canny edge
     sigma = 0.3
-    median = np.median(image)
+    median = np.median(grey_image)
     lower = int(max(0, (1.0-sigma)*median))
     upper = int(min(255, (1.0+sigma)*median))
     edge_canny = cv.Canny(grey_image, lower, upper)
@@ -125,42 +74,63 @@ def traditional_feature_extraction(path, kernels, size=(244, 244)):
         feature_vector["Row"+str(index)] = row
     for index, column in enumerate(column_sums):
         feature_vector["Column"+str(index)] = column
+    return feature_vector
 
-    #alg = cv.ORB_create(nfeatures=5000)
-    #kps = alg.detect(image)
-    #n = 500
-    #kps = sorted(kps, key=lambda x: -x.response)[:n]
-    #keypoint_matrix = np.zeros(size)
-#
+def orb_feature_extraction(feature_vector, image, size):
+    import cv2 as cv
+    alg = cv.ORB_create(nfeatures=5000)
+    kps = alg.detect(image)
+    n = 500
+    kps = sorted(kps, key=lambda x: -x.response)[:n]
+    keypoint_matrix = np.zeros(size)
+
     # compute descriptor values from keypoints (128 per keypoint)
-    #kps, dsc = alg.compute(image, kps)
-    #
-    # for point in kps:
-    #    x, y = point.pt
-    #    keypoint_matrix[round(x)][round(y)] = point.size
-#
-    ##plt.imshow(keypoint_matrix.transpose(), cmap='hot', interpolation='nearest')
-    #
-    ##print(f"KPS: {kps}")
-    ##print(f"DSC: {dsc}")
-    ##img2 = cv.drawKeypoints(image, kps, None, color=(0,255,0), flags=0)
-    # cv.imshow("Keypoints",img2)
-    # plt.show()
-    # cv.waitKey(0)
-    # try:
-    #    vector = dsc.reshape(-1)
-    # except:
-    #    vector = np.zeros(n*32)
-#
-    # if vector.size < (n*32):
-    #   # It can happen that there are simply not enough keypoints in an image,
-    #   # in which case you can choose to fill the missing vector values with zeroes
-    #    vector = np.concatenate([vector, np.zeros(n*32 - vector.size)])
-    # print(vector)
-    #orb_descriptors = {}
-    # for i in range(len(vector)):
-    #    feature_vector["ORB"+str(i)] = vector[i]
+    kps, dsc = alg.compute(image, kps)
+    
+    for point in kps:
+        x, y = point.pt
+        keypoint_matrix[round(x)][round(y)] = point.size
 
+    #plt.imshow(keypoint_matrix.transpose(), cmap='hot', interpolation='nearest')
+    
+    #print(f"KPS: {kps}")
+    #print(f"DSC: {dsc}")
+    #img2 = cv.drawKeypoints(image, kps, None, color=(0,255,0), flags=0)
+    #cv.imshow("Keypoints",img2)
+    #plt.show()
+    #cv.waitKey(0)
+    try:
+        vector = dsc.reshape(-1)
+    except:
+        vector = np.zeros(n*32)
+
+    if vector.size < (n*32):
+       # It can happen that there are simply not enough keypoints in an image,
+       # in which case you can choose to fill the missing vector values with zeroes
+        vector = np.concatenate([vector, np.zeros(n*32 - vector.size)])
+    # print(vector)
+    for i in range(len(vector)):
+        feature_vector["ORB"+str(i)] = vector[i]
+    return feature_vector
+
+
+def traditional_feature_extraction(path, kernels, size=(640, 350)):
+    import matplotlib.pyplot as plt
+    import cv2 as cv
+    # print(path)
+    img = cv.imread(path)
+    #size = (640, 350)
+    image = cv.resize(img, size, interpolation=cv.INTER_LINEAR)
+    original = image.copy()
+    grey_image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+    name_df = {}
+    name_df["Name"] = path
+    feature_vector = {}
+    #feature_vector = ROI_color_feature_extraction(feature_vector, image)
+    feature_vector = color_feature_extraction(feature_vector, image)
+    #feature_vector = canny_edge_feature_extraction(feature_vector, grey_image)
+    #feature_vector = binaryPatterns(feature_vector, grey_image, 24, 8)
+    #feature_vector = orb_feature_extraction(feature_vector, image, size)
     name_df = pd.DataFrame([name_df])
     df1 = pd.DataFrame([feature_vector])
     returndf = name_df.join(df1)

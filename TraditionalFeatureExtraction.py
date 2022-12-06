@@ -13,7 +13,8 @@ if __name__ == "__main__":
     try:
         data_path = str(args[0])
         filename = str(args[1])
-        image_size = (int(args[2]), int(args[2]))
+        image_size_x = int(args[2])
+        image_size_y = int(args[3])
 
     except Exception as e:
         print("Wrong usage of arguments.")
@@ -33,8 +34,7 @@ if __name__ == "__main__":
     # Feature Extraction
     dataframe_list = []
     for path in all_image_paths:
-        dataframe = traditional_feature_extraction(
-            path, gabor_filters, image_size)
+        dataframe = traditional_feature_extraction(path, gabor_filters, (image_size_x,image_size_y))
         dataframe_list.append(dataframe)
     df = pd.concat(dataframe_list, ignore_index=True)
     if take_time:

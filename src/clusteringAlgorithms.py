@@ -16,29 +16,31 @@ def perform_KMeans(data, min_clusters, max_clusters):
     return sse, score, silhouette_coefficients, labels
 
 
+
 def perform_DBSCAN(data, min_cluster_size, max_cluster_size):
-    import hdbscan
+    import numpy as np
     print(data)
     # --------- CALCULATE DBSCAN CLUSTERS ------------
 
     # Compute DBSCAN
-    db = DBSCAN(eps=0.3, min_samples=10).fit(X)
+    db = DBSCAN(eps=0.3, min_samples=10).fit(data)
     core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
     core_samples_mask[db.core_sample_indices_] = True
     labels = db.labels_
 
     #sse = []
+
     silhouette_coefficients = []
     #labels = []
     #not allow unclustered points
-    clusterer = hdbscan.HDBSCAN(algorithm='best', alpha=1.0, approx_min_span_tree=True, gen_min_span_tree=False, leaf_size=5, metric='euclidean', min_cluster_size=5, min_samples=None, p=None)#cluster_selection_epsilon = 0.00001)
-    clusterer.fit(data)
-    print(f"Cluster Lables: {clusterer.labels_}")   # the labels of the clusters are [-1, -1, -1, .... -1]
+    #clusterer = hdbscan.HDBSCAN(algorithm='best', alpha=1.0, approx_min_span_tree=True, gen_min_span_tree=False, leaf_size=40, metric='euclidean', min_cluster_size=10, min_samples=None, p=None)#cluster_selection_epsilon = 0.00001)
+    #clusterer.fit(data)
+    #print(f"Cluster Lables: {clusterer.labels_}")   # the labels of the clusters are [-1, -1, -1, .... -1]
     
     #sse.append(0)       # DBSCAN doesn't contain "inertia_"
-    score = silhouette_score(data, clusterer.labels_)
+    score = 0# silhouette_score(data, clusterer.labels_)
     silhouette_coefficients.append(score)
-    labels.append(clusterer.labels_)    
+    #labels.append(clusterer.labels_)    
     return score, silhouette_coefficients, labels
 
 
@@ -50,7 +52,7 @@ def perform_HDBSCAN(data, min_cluster_size, max_cluster_size):
     silhouette_coefficients = []
     labels = []
     #not allow unclustered points
-    clusterer = hdbscan.HDBSCAN(cluster_selection_epsilon = 0.00001)
+    clusterer = hdbscan.HDBSCAN(cluster_selection_epsilon = 0.0001, min_cluster_size = min_cluster_size, min_samples = 1)
     clusterer.fit(data)
     print(clusterer.labels_)   # the labels of the clusters are [-1, -1, -1, .... -1]
     
