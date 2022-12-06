@@ -41,16 +41,17 @@ if __name__ == "__main__":
     dir_name = date.strftime("%c")#.replace(":", "")
     basedir = os.getcwd()+"/"
     os.chdir(basedir+dir)
-    print(basedir+dir)
     for cluster_number in range(n_clusters):
         cluster = df.loc[df["Cluster"]==cluster_number]
+        cluster = cluster.sort_values(by=["Distance"], ascending=True, axis=0)
         image_list = []
+        distance_to_centroid = cluster[["Distance"]].to_numpy()
         for image_path in cluster["Name"]:
             image_list.append(basedir+image_path)
         column_number = int(np.ceil(np.sqrt(len(image_list))))
         if len(image_list) > 0:
             print("Merging images")
-            merged_image = combine_images(columns=column_number, space=10, images=image_list)
+            merged_image = combine_images(columns=column_number, space=10, images=image_list, distances=distance_to_centroid)
             merged_image.save(str(cluster_number)+".png")
             merged_image.show()
     #print(n_unique)
