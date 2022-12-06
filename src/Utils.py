@@ -2,7 +2,7 @@ import numpy as np
 import os
 
 
-def saveFeaturesInCSV(folder, filename, features):
+def saveDataFrameAsCSV(folder, filename, features):
     os.makedirs(f'{folder}{filename}', exist_ok=True)
     features.to_csv(f'{folder}{filename}/{filename}.csv')
 
@@ -45,9 +45,9 @@ def get_image_paths(data_path):
     all_paths = []
     print("Getting paths")
     #print("Data Path is : " + str(data_path))
-    #print(os.walk(data_path))
+    # print(os.walk(data_path))
     for index, directories in enumerate(os.walk(data_path)):
-        #print(directories)
+        # print(directories)
         for sample in directories[2]:
             # print(sample)
             if sample.endswith('.png'):

@@ -137,16 +137,15 @@ def traditional_feature_extraction(path, kernels, size=(640, 350)):
     return returndf
 
 
-def dnn_feature_exctration(file, model):
+def dnn_feature_exctration(file, model, image_size):
     from tensorflow.keras.utils import load_img
     from tensorflow.keras.applications.vgg16 import preprocess_input
     from PIL import Image
-    # load the image as a 224x224 array
-    img = load_img(file, target_size=(224, 224))
+    img = load_img(file, target_size=(image_size, image_size))
     # convert from 'PIL.Image.Image' to numpy array
     img = np.array(img)
     # reshape the data for the model reshape(num_of_samples, dim 1, dim 2, channels)
-    reshaped_img = img.reshape(1, 224, 224, 3)
+    reshaped_img = img.reshape(1, image_size, image_size, 3)
     # prepare image for model
     imgx = preprocess_input(reshaped_img)
     # get the feature vector
