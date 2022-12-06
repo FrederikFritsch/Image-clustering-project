@@ -34,7 +34,8 @@ if __name__ == "__main__":
     # Feature Extraction
     dataframe_list = []
     for path in all_image_paths:
-        dataframe = traditional_feature_extraction(path, gabor_filters, (image_size_x,image_size_y))
+        dataframe = traditional_feature_extraction(
+            path, gabor_filters, (image_size_x, image_size_y))
         dataframe_list.append(dataframe)
     df = pd.concat(dataframe_list, ignore_index=True)
     if take_time:
@@ -43,5 +44,4 @@ if __name__ == "__main__":
         print(
             f"Time elapsed to extract features of {len(all_image_paths)} Images: {endtime-starttime}")
 
-    saveFeaturesInCSV("Results/Traditional/", filename, df)
-
+    saveDataFrameAsCSV("Results/Traditional/", filename, df)
