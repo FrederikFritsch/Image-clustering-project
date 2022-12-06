@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from scipy.stats import skew
 import sys
+from .Utils import resize_image
 
 
 def ROI_color_feature_extraction(feature_vector, image):
@@ -91,10 +92,6 @@ def orb_feature_extraction(feature_vector, image, size):
         x, y = point.pt
         keypoint_matrix[round(x)][round(y)] = point.size
 
-    #plt.imshow(keypoint_matrix.transpose(), cmap='hot', interpolation='nearest')
-    
-    #print(f"KPS: {kps}")
-    #print(f"DSC: {dsc}")
     #img2 = cv.drawKeypoints(image, kps, None, color=(0,255,0), flags=0)
     #cv.imshow("Keypoints",img2)
     #plt.show()
@@ -108,7 +105,6 @@ def orb_feature_extraction(feature_vector, image, size):
        # It can happen that there are simply not enough keypoints in an image,
        # in which case you can choose to fill the missing vector values with zeroes
         vector = np.concatenate([vector, np.zeros(n*32 - vector.size)])
-    # print(vector)
     for i in range(len(vector)):
         feature_vector["ORB"+str(i)] = vector[i]
     return feature_vector
@@ -119,17 +115,16 @@ def traditional_feature_extraction(path, kernels, size=(640, 350)):
     import cv2 as cv
     # print(path)
     img = cv.imread(path)
-    #size = (640, 350)
-    image = cv.resize(img, size, interpolation=cv.INTER_LINEAR)
+    image = resize_image(img, size)
     original = image.copy()
     grey_image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
     name_df = {}
     name_df["Name"] = path
     feature_vector = {}
     #feature_vector = ROI_color_feature_extraction(feature_vector, image)
-    feature_vector = color_feature_extraction(feature_vector, image)
+    #feature_vector = color_feature_extraction(feature_vector, image)
     #feature_vector = canny_edge_feature_extraction(feature_vector, grey_image)
-    #feature_vector = binaryPatterns(feature_vector, grey_image, 24, 8)
+    feature_vector = binaryPatterns(feature_vector, grey_image, 24, 8)
     #feature_vector = orb_feature_extraction(feature_vector, image, size)
     name_df = pd.DataFrame([name_df])
     df1 = pd.DataFrame([feature_vector])

@@ -6,6 +6,19 @@ def saveDataFrameAsCSV(folder, filename, features):
     os.makedirs(f'{folder}{filename}', exist_ok=True)
     features.to_csv(f'{folder}{filename}/{filename}.csv')
 
+def resize_image(image, size, method="Lanczos"):
+    import cv2 as cv
+    if method == "Lanczos":
+        image = cv.resize(image, size, interpolation=cv.INTER_LANCZOS4)
+    elif method == "Area":
+        image = cv.resize(image, size, interpolation=cv.INTER_AREA)
+    elif method == "Linear":        
+        image = cv.resize(image, size, interpolation=cv.INTER_LINEAR)
+    elif method == "Cubic":
+        image = cv.resize(image, size, interpolation=cv.INTER_CUBIC)
+    else:
+        image = cv.resize(image, size, interpolation=cv.INTER_NEAREST)
+    return image
 
 def combine_images(columns, space, images):
     from PIL import Image
