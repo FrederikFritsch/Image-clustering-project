@@ -25,7 +25,6 @@ if __name__ == "__main__":
         print("Wrong usage of arguments.")
         print(e)
         quit()
-    
 
 
     try:
@@ -69,18 +68,6 @@ if __name__ == "__main__":
 
     results_df = pd.concat([image_names_df, cluster_labels], axis=1)
     #print(results_df)
-
-    # Only Plotting below this line
-
-    #fig, axes = plt.subplots(2, 1)
-    #plt.style.use("fivethirtyeight")
-    #axes[0].plot(range(min_clusters, max_clusters+1), sse)
-    #axes[0].set_xlabel("Number of Clusters")
-    #axes[0].set_ylabel("SSE")
-    #axes[1].plot(range(min_clusters, max_clusters+1), silhouette_coefficients)
-    #axes[1].set_xlabel("Number of Clusters")
-    #axes[1].set_ylabel("Silhouette Coefficient")
-    #plt.figure(figsize=(16,10))
 
     os.makedirs(f'{resultspath}', exist_ok=True)  
     results_df.to_csv(f'{resultspath}/KMeansResults.csv') 
