@@ -59,7 +59,7 @@ if __name__ == "__main__":
     
     print(f"Explained components: {pca.explained_variance_ratio_}")
     # Clustering algorithm from file "clusteringAlgorithms.py"
-    sse, score, silhouette_coefficients, labels = perform_HDBSCAN(features_pca_df, min_cluster_size, max_cluster_size)
+    score, silhouette_coefficients, labels = perform_HDBSCAN(features_pca_df, min_cluster_size, max_cluster_size)
     print(labels)
     results_df = image_names_df
     results_df["Cluster"] = pd.DataFrame(labels)

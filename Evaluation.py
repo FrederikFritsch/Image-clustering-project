@@ -32,10 +32,11 @@ if __name__ == "__main__":
         quit()
     print(df)
 
-
-    n_clusters = df.max()["Cluster"]+1
-    #print(n_clusters)
     
+    #n_clusters = df.max()["Cluster"]+1
+    n_clusters = len(df["Cluster"].unique())
+    print(n_clusters)
+    #print(n_unique)
     #print(f"Silhouette coefficient: {n_clusters} clusters return best results")
     
     #lables_index = np.argmax(silhouette_coefficients)
@@ -78,6 +79,7 @@ if __name__ == "__main__":
     dir_name = date.strftime("%c")#.replace(":", "")
     basedir = os.getcwd()+"/"
     os.chdir(basedir+dir)
+    print(basedir+dir)
     for cluster_number in range(n_clusters):
         cluster = df.loc[df["Cluster"]==cluster_number]
         image_list = []
@@ -85,7 +87,7 @@ if __name__ == "__main__":
             image_list.append(basedir+image_path)
         column_number = int(np.ceil(np.sqrt(len(image_list))))
         if len(image_list) > 0:
-
+            print("Merging images")
             merged_image = combine_images(columns=column_number, space=10, images=image_list)
             merged_image.save(str(cluster_number)+".png")
             merged_image.show()

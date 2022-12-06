@@ -83,4 +83,4 @@ if __name__ == "__main__":
     #plt.figure(figsize=(16,10))
 
     os.makedirs(f'{resultspath}', exist_ok=True)  
-    results_df.to_csv(f'{resultspath}/ClusterResults.csv') 
+    results_df.to_csv(f'{resultspath}/KMeansResults.csv') 
