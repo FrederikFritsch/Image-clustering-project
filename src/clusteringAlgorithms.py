@@ -18,13 +18,13 @@ def perform_KMeans(data, min_clusters, max_clusters):
 
 
 def perform_HDBSCAN(data, min_cluster_size, max_cluster_size):
-    print(data)
+    print(f"Data HDBSCAN:{data}")
     # --------- CALCULATE HDBSCAN CLUSTERS ------------
     sse = []
     silhouette_coefficients = []
     #labels = []
     #not allow unclustered points
-    clusterer = hdbscan.HDBSCAN(algorithm='best', alpha=1.0, approx_min_span_tree=True, gen_min_span_tree=False, leaf_size=5, metric='euclidean', min_cluster_size=5, min_samples=None, p=None)#cluster_selection_epsilon = 0.00001)
+    clusterer = hdbscan.HDBSCAN(algorithm='best', alpha=1.0, approx_min_span_tree=True, gen_min_span_tree=False, leaf_size=40, metric='euclidean', min_cluster_size=10, min_samples=None, p=None)#cluster_selection_epsilon = 0.00001)
     clusterer.fit(data)
     print(f"Cluster Lables: {clusterer.labels_}")   # the labels of the clusters are [-1, -1, -1, .... -1]
     

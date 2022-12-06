@@ -33,7 +33,7 @@ if __name__ == "__main__":
     except Exception as e:
         print(e)
         quit()
-    #print(df)
+    print(df)
     # Feature normalization
     features_df = df.loc[:, df.columns[1:]]
     image_names_df = df.loc[:, ['Name']]
@@ -48,12 +48,13 @@ if __name__ == "__main__":
         print("Standardizing")
         #scaler.fit(features_df)
         features_df = scaler.fit_transform(features_df)
+    print("Transformed:")
     print(features_df)
     # Dimensionality reduction
     pca = PCA(pca_variance)
     
     features_pca_df = pca.fit_transform(features_df)
-
+    print(features_pca_df)
     print(f"Explained components: {pca.explained_variance_ratio_}")
     # Clustering algorithm from file "clusteringAlgorithms.py"
     sse, score, silhouette_coefficients, labels = perform_HDBSCAN(features_pca_df, min_clusters, max_clusters)
