@@ -49,7 +49,7 @@ def perform_HDBSCAN(data, min_cluster_size, max_cluster_size):
     silhouette_coefficients = []
     labels = []
     #not allow unclustered points
-    clusterer = hdbscan.HDBSCAN(cluster_selection_epsilon = 0.00001)
+    clusterer = hdbscan.HDBSCAN(cluster_selection_epsilon = 0.0001, min_cluster_size = min_cluster_size, min_samples = 1)
     clusterer.fit(data)
     print(clusterer.labels_)   # the labels of the clusters are [-1, -1, -1, .... -1]
     
