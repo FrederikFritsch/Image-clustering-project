@@ -5,17 +5,18 @@ import numpy as np
 import pandas as pd
 from scipy.stats import skew
 import sys
-from skimage import feature
+
 
 def ROI_color_feature_extraction(feature_vector, image):
     import cv2 as cv
     grey_image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
-    blurred_image = cv.GaussianBlur(grey_image,(15,15), 0)
-    th = cv.threshold(blurred_image,200,255,cv.THRESH_BINARY_INV+cv.THRESH_OTSU)[1]
-    kernel = cv.getStructuringElement(cv.MORPH_RECT, (10,10))
-    dilated_image = cv.erode(th,kernel,iterations = 1)
-    res = cv.bitwise_and(image,image,mask = dilated_image)
-    
+    blurred_image = cv.GaussianBlur(grey_image, (15, 15), 0)
+    th = cv.threshold(blurred_image, 200, 255,
+                      cv.THRESH_BINARY_INV+cv.THRESH_OTSU)[1]
+    kernel = cv.getStructuringElement(cv.MORPH_RECT, (10, 10))
+    dilated_image = cv.erode(th, kernel, iterations=1)
+    res = cv.bitwise_and(image, image, mask=dilated_image)
+
     for channel, color in zip(cv.split(res), ["Blue", "Green", "Red"]):
         histogram, bin_edges = np.histogram(channel, bins=64, range=(1, 256))
         for index, bin in enumerate(bin_edges[0:-1]):
@@ -27,16 +28,20 @@ def ROI_color_feature_extraction(feature_vector, image):
     #cv.imshow("After Mask", res)
     #cv.imshow("Dilated", dilated_image)
     #cv.imshow("After Mask", res)
-    #cv.waitKey()
-    #cv.waitKey()
+    # cv.waitKey()
+    # cv.waitKey()
     return feature_vector
 
+
 def binaryPatterns(image, numPoints, radius):
+    from skimage import feature
     eps = 1e-7
-    #print("Inside")
-    lbp = feature.local_binary_pattern(image, numPoints, radius, method="uniform")
-    (hist, _) = np.histogram(lbp.ravel(), bins=np.arange(0, numPoints+3), range=(0, numPoints +2))
-    hist= hist.astype("float")
+    # print("Inside")
+    lbp = feature.local_binary_pattern(
+        image, numPoints, radius, method="uniform")
+    (hist, _) = np.histogram(lbp.ravel(), bins=np.arange(
+        0, numPoints+3), range=(0, numPoints + 2))
+    hist = hist.astype("float")
     hist /= (hist.sum()+eps)
     return hist
 
@@ -56,8 +61,8 @@ def traditional_feature_extraction(path, kernels, size=(244, 244)):
     feature_vector = ROI_color_feature_extraction(feature_vector, image)
 
     #print("Calling Function")
-    LBPhist = binaryPatterns(grey_image,24, 8)
-    #print(LBPhist)
+    LBPhist = binaryPatterns(grey_image, 24, 8)
+    # print(LBPhist)
     #cv.imshow("Original", image)
     #cv.imshow("Grey", grey_image)
     #
@@ -65,9 +70,8 @@ def traditional_feature_extraction(path, kernels, size=(244, 244)):
     #image = cv.cvtColor(image, cv.COLOR_BGR2HSV)
     # print(image.shape)
 
-
     # Feature 1: Add color distributions as attributes
-    #for channel, color in zip(cv.split(image), ["Blue", "Green", "Red"]):
+    # for channel, color in zip(cv.split(image), ["Blue", "Green", "Red"]):
     #    histogram, bin_edges = np.histogram(channel, bins=16, range=(0, 256))
     #    for index, bin in enumerate(bin_edges[0:-1]):
     #        feature_vector[color+str(bin)] = histogram[index]
@@ -76,7 +80,7 @@ def traditional_feature_extraction(path, kernels, size=(244, 244)):
     #    feature_vector[color+"Skewness"] = skew(channel.reshape(-1))
 
     # Convert to grayscale for gabor filters
-    
+
     #image2 = grey_image.reshape(-1)
     #num = 1
     #gabor_features = {}
@@ -112,11 +116,11 @@ def traditional_feature_extraction(path, kernels, size=(244, 244)):
     median = np.median(image)
     lower = int(max(0, (1.0-sigma)*median))
     upper = int(min(255, (1.0+sigma)*median))
-    edge_canny = cv.Canny(grey_image, lower,upper)
-    #plt.imshow(edge_canny)
-    #plt.show()
-    row_sums = np.sum(edge_canny, axis = 0)
-    column_sums = np.sum(edge_canny, axis = 1)
+    edge_canny = cv.Canny(grey_image, lower, upper)
+    # plt.imshow(edge_canny)
+    # plt.show()
+    row_sums = np.sum(edge_canny, axis=0)
+    column_sums = np.sum(edge_canny, axis=1)
     for index, row in enumerate(row_sums):
         feature_vector["Row"+str(index)] = row
     for index, column in enumerate(column_sums):
@@ -128,10 +132,10 @@ def traditional_feature_extraction(path, kernels, size=(244, 244)):
     #kps = sorted(kps, key=lambda x: -x.response)[:n]
     #keypoint_matrix = np.zeros(size)
 #
-    ## compute descriptor values from keypoints (128 per keypoint)
+    # compute descriptor values from keypoints (128 per keypoint)
     #kps, dsc = alg.compute(image, kps)
     #
-    #for point in kps:
+    # for point in kps:
     #    x, y = point.pt
     #    keypoint_matrix[round(x)][round(y)] = point.size
 #
@@ -140,21 +144,21 @@ def traditional_feature_extraction(path, kernels, size=(244, 244)):
     ##print(f"KPS: {kps}")
     ##print(f"DSC: {dsc}")
     ##img2 = cv.drawKeypoints(image, kps, None, color=(0,255,0), flags=0)
-    ##cv.imshow("Keypoints",img2)
-    ##plt.show()
-    ##cv.waitKey(0)
-    #try:
+    # cv.imshow("Keypoints",img2)
+    # plt.show()
+    # cv.waitKey(0)
+    # try:
     #    vector = dsc.reshape(-1)
-    #except:
+    # except:
     #    vector = np.zeros(n*32)
 #
-    #if vector.size < (n*32):
+    # if vector.size < (n*32):
     #   # It can happen that there are simply not enough keypoints in an image,
     #   # in which case you can choose to fill the missing vector values with zeroes
     #    vector = np.concatenate([vector, np.zeros(n*32 - vector.size)])
-    ## print(vector)
+    # print(vector)
     #orb_descriptors = {}
-    #for i in range(len(vector)):
+    # for i in range(len(vector)):
     #    feature_vector["ORB"+str(i)] = vector[i]
 
     name_df = pd.DataFrame([name_df])
