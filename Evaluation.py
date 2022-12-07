@@ -59,14 +59,7 @@ if __name__ == "__main__":
             merged_image = combine_images(columns=column_number, space=10, images=image_list, distances=distance_to_centroid)
             merged_image.save(str(cluster_number)+".png")
             merged_image.show()
-    #print(n_unique)
-    #print(f"Silhouette coefficient: {n_clusters} clusters return best results")
-    
-    #lables_index = np.argmax(silhouette_coefficients)
-    #cluster_labels = df["Cluster"]
-    #print(cluster_labels)
 
-    # Only Plotting below this line
     
     #X = TSNE(n_components=2, perplexity=5).fit_transform(features_pca_df)
     #tsne_df = pd.DataFrame()
@@ -76,15 +69,6 @@ if __name__ == "__main__":
     #tsne_df["X_tsne"]  = X[:, 0]
     #tsne_df["Y_tsne"] = X[:, 1]
     ##print(tsne_df)
-    #fig, axes = plt.subplots(2, 1)
-    #plt.style.use("fivethirtyeight")
-    #axes[0].plot(range(min_clusters, max_clusters+1), sse)
-    #axes[0].set_xlabel("Number of Clusters")
-    #axes[0].set_ylabel("SSE")
-    #axes[1].plot(range(min_clusters, max_clusters+1), silhouette_coefficients)
-    #axes[1].set_xlabel("Number of Clusters")
-    #axes[1].set_ylabel("Silhouette Coefficient")
-    #plt.figure(figsize=(16,10))
     ##sns.scatterplot(
     ##    x="X_tsne", y="Y_tsne",
     ##    hue="ClusterID",
@@ -94,7 +78,5 @@ if __name__ == "__main__":
     ##    alpha=1
     ##)
     #plt.show()
-
-
 
     #Image merging and showing/storing

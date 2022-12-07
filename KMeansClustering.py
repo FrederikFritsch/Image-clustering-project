@@ -8,6 +8,7 @@ from sklearn.decomposition import PCA
 from src.clusteringAlgorithms import *
 from src.featureExtraction import *
 from src.Utils import *
+import matplotlib.pyplot as plt
 
 
 if __name__ == "__main__":
@@ -78,3 +79,16 @@ if __name__ == "__main__":
 
     os.makedirs(f'{resultspath}', exist_ok=True)  
     results_df.to_csv(f'{resultspath}/KMeansResults.csv') 
+
+    fig, axes = plt.subplots(2, 1)
+    plt.style.use("fivethirtyeight")
+    axes[0].plot(range(min_clusters, max_clusters+1), sse)
+    axes[0].set_xlabel("Number of Clusters")
+    axes[0].set_ylabel("SSE")
+    axes[1].plot(range(min_clusters, max_clusters+1), silhouette_coefficients)
+    axes[1].set_xlabel("Number of Clusters")
+    axes[1].set_ylabel("Silhouette Coefficient")
+
+    plt.savefig(f'{resultspath}/ClusterScores.png')
+    #plt.show()
+    
