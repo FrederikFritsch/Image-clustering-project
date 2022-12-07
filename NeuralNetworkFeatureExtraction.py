@@ -37,4 +37,4 @@ for path in all_image_paths:
 endtime = time.time()
 print(
     f"Time elapsed to extract features of {len(all_image_paths)} Images: {endtime-starttime}")
-saveFeaturesInCSV("Results/DNN/", filename, df)
+saveDataFrameAsCSV("Results/", filename, df)

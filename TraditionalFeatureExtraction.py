@@ -44,4 +44,4 @@ if __name__ == "__main__":
         print(
             f"Time elapsed to extract features of {len(all_image_paths)} Images: {endtime-starttime}")
 
-    saveDataFrameAsCSV("Results/Traditional/", filename, df)
+    saveDataFrameAsCSV("Results/", filename, df)

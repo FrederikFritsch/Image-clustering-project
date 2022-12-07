@@ -20,6 +20,7 @@ if __name__ == "__main__":
     try:
         filepath = str(args[0])
         dir = str(args[1])
+        nr_of_images = int(args[2])
     except Exception as e:
         print("Wrong usage of arguments.")
         print(e)
@@ -30,12 +31,12 @@ if __name__ == "__main__":
     except Exception as e:
         print(e)
         quit()
-    print(df)
+    #print(df)
 
     
     #n_clusters = df.max()["Cluster"]+1
     n_clusters = len(df["Cluster"].unique())
-    print(n_clusters)
+    #print(n_clusters)
 
     date = datetime.datetime.now()
     dir_name = date.strftime("%c")#.replace(":", "")
@@ -44,8 +45,12 @@ if __name__ == "__main__":
     for cluster_number in range(n_clusters):
         cluster = df.loc[df["Cluster"]==cluster_number]
         cluster = cluster.sort_values(by=["Distance"], ascending=True, axis=0)
-        image_list = []
+        
+        if cluster.shape[0] > nr_of_images:
+            cluster = cluster.head(nr_of_images)
+
         distance_to_centroid = cluster[["Distance"]].to_numpy()
+        image_list = []
         for image_path in cluster["Name"]:
             image_list.append(basedir+image_path)
         column_number = int(np.ceil(np.sqrt(len(image_list))))
