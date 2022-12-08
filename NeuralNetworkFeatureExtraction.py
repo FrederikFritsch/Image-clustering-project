@@ -7,6 +7,19 @@ from keras.models import Model
 from src.featureExtraction import *
 import time
 
+
+def preTrainedModelPick(kerasModel):
+    if kerasModel == "VGG16":
+        model = VGG16()
+        return Model(inputs=model.inputs, outputs=model.layers[-2].output), 224
+    if kerasModel == "XCEPTION":
+        model = Xception()
+        return Model(inputs=model.inputs, outputs=model.layers[-2].output), 299
+    else:
+        raise Exception(
+            "Wrong model input. Check the READ.ME for currently supported pre-trained models")
+
+
 if __name__ == "__main__":
     args = sys.argv[1:]
     if len(args) == 0:
@@ -14,16 +27,16 @@ if __name__ == "__main__":
     try:
         data_path = str(args[0])
         filename = str(args[1])
-        image_size = int(args[2])
+        model_name = str(args[2])
     except Exception as e:
         print("Wrong usage of arguments.")
         print(e)
         quit()
 all_image_paths = get_image_paths(data_path)
-#model = VGG16()
-#model = Model(inputs=model.inputs, outputs=model.layers[-2].output)
-model = Xception()
-model = Model(inputs=model.inputs, outputs=model.layers[-2].output)
+
+model, image_size = preTrainedModelPick(model_name)
+
+
 starttime = time.time()
 
 print(image_size)
