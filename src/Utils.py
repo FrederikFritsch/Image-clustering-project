@@ -19,7 +19,7 @@ def resize_image(image, size, method="Lanczos"):
     else:
         image = cv.resize(image, size, interpolation=cv.INTER_NEAREST)
     return image
-
+3
 def combine_images(columns, space, images, distances):
     from PIL import Image, ImageDraw
     rows = len(images) // columns
@@ -42,12 +42,12 @@ def combine_images(columns, space, images, distances):
     x = 0
     y = 0
     for i, image in enumerate(images):
-        text = "Dst to cnetroid: " + str(distances[i])
+        text = "Sqrd dst to centroid: " + str(distances[i])
         img = Image.open(image)
         x_offset = int((width_max-img.width)/2)
         y_offset = int((height_max-img.height)/2)
-        i1 = ImageDraw.Draw(img).text((10,10), text, (0,0,0))
-        i2 = ImageDraw.Draw(img).text((10,30), text, (255,255,255))
+        i1 = ImageDraw.Draw(img).text((10,5), text, (0,0,0))
+        i2 = ImageDraw.Draw(img).text((10,15), text, (255,255,255))
         background.paste(img, (x+x_offset, y+y_offset))
         x += width_max + space
         if (i+1) % columns == 0:
@@ -71,19 +71,3 @@ def get_image_paths(data_path):
                 all_paths.append(full_path)
     print(len(all_paths))
     return all_paths
-
-
-def create_gabor_filters(kernelsize=[10], thetarotations=2, sigmas=[3], lamdas=[2.*np.pi], gammas=[0.4]):
-    import cv2 as cv
-    kernels = []
-    for ksize in kernelsize:
-        for theta in range(thetarotations):        # Thetarotations
-            theta = theta / float(thetarotations) * np.pi
-            for sigma in sigmas:                   # SIGMA with 1 and 3
-                for lamda in lamdas:               # range of wavelengths
-                    for gamma in gammas:           # GAMMA values of 0.05 and 0.5
-                        phi = 0
-                        kernel = cv.getGaborKernel(
-                            (ksize, ksize), sigma, theta, lamda, gamma, phi, ktype=cv.CV_32F)
-                        kernels.append(kernel)
-    return kernels

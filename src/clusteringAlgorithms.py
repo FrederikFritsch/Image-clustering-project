@@ -19,6 +19,7 @@ def perform_KMeans(data, min_clusters, max_clusters):
         score = silhouette_score(data, kmeans.labels_)
         silhouette_coefficients.append(score)
         labels.append(kmeans.labels_)
+        print(kmeans.n_iter_)
         distance = kmeans.transform(data)**2
         cluster_distances.append(distance)
     return sse, silhouette_coefficients, labels, cluster_distances
