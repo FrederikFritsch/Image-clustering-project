@@ -27,15 +27,13 @@ if __name__ == "__main__":
     # Get image paths in data directory
     all_image_paths = get_image_paths(data_path)
 
-    gabor_filters = create_gabor_filters()  # Creates list of Gabor filters
 
     if take_time:
         starttime = time.time()  # Start time
     # Feature Extraction
     dataframe_list = []
     for path in all_image_paths:
-        dataframe = traditional_feature_extraction(
-            path, gabor_filters, (image_size_x, image_size_y))
+        dataframe = traditional_feature_extraction(path, (image_size_x, image_size_y))
         dataframe_list.append(dataframe)
     df = pd.concat(dataframe_list, ignore_index=True)
     if take_time:

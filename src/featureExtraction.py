@@ -110,7 +110,7 @@ def orb_feature_extraction(feature_vector, image, size):
     return feature_vector
 
 
-def traditional_feature_extraction(path, kernels, size=(640, 350)):
+def traditional_feature_extraction(path, size=(640, 350)):
     import matplotlib.pyplot as plt
     import cv2 as cv
     # print(path)
