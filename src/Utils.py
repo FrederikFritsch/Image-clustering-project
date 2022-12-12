@@ -19,7 +19,7 @@ def resize_image(image, size, method="Lanczos"):
     else:
         image = cv.resize(image, size, interpolation=cv.INTER_NEAREST)
     return image
-
+3
 def combine_images(columns, space, images, distances):
     from PIL import Image, ImageDraw
     rows = len(images) // columns
@@ -42,12 +42,12 @@ def combine_images(columns, space, images, distances):
     x = 0
     y = 0
     for i, image in enumerate(images):
-        text = "Dst to cnetroid: " + str(distances[i])
+        text = "Sqrd dst to centroid: " + str(distances[i])
         img = Image.open(image)
         x_offset = int((width_max-img.width)/2)
         y_offset = int((height_max-img.height)/2)
-        i1 = ImageDraw.Draw(img).text((10,10), text, (0,0,0))
-        i2 = ImageDraw.Draw(img).text((10,30), text, (255,255,255))
+        i1 = ImageDraw.Draw(img).text((10,5), text, (0,0,0))
+        i2 = ImageDraw.Draw(img).text((10,15), text, (255,255,255))
         background.paste(img, (x+x_offset, y+y_offset))
         x += width_max + space
         if (i+1) % columns == 0:
