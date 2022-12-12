@@ -20,9 +20,9 @@ if __name__ == "__main__":
         resultspath = str(args[1])
         normalization_method = str(args[2])
         pca_variance = float(args[3])     # how to decide the value of this by ourselves?
-        #min_clusters = int(args[4])       # try several values of min_clusters and max_clusters, the results are the same [-1, -1,...,-1]
+        #min_clusters = int(args[4])      
         #max_clusters = int(args[5])
-        min_cluster_size = int(args[4])
+        min_cluster_size = int(args[4])   # the most important parameter for HDBSCAN is min_cluster_size
         #max_cluster_size = int(args[5])
     except Exception as e:
         print("Wrong usage of arguments.")
@@ -55,7 +55,6 @@ if __name__ == "__main__":
     #print(features_df) # features after normalization/standardization # the shape is (208, 1191)
 
     # Dimensionality reduction
-    #pca = PCA(n_components=2)
     pca = PCA(pca_variance)       
     features_pca_df = pca.fit_transform(features_df)   # the shape is (208, 32)
 
@@ -70,7 +69,7 @@ if __name__ == "__main__":
     for i in range(2, 208):
         c = np.array(features_pca_df[i]).T.tolist()
         df2.loc[len(df2.index)]=[c]
-    print(df2)
+    #print(df2)
 
     def scatter_thumbnails(data, images, zoom=0.12, colors=None):
         assert len(data) == len(images)
@@ -98,25 +97,27 @@ if __name__ == "__main__":
         return ax
 
     scatter_thumbnails(df2.Feature_PCA.tolist(), df.Name.tolist())
-    plt.title('Image Visualization - Principal Component Analysis')
+    plt.title('Image Visualization after PCA')
     plt.show()
+
 
     # use t-SNE to visualize the images, you can skip this part if you want
     from sklearn.manifold import TSNE
-    x = PCA().fit_transform(df2['Feature_PCA'].tolist())
-    x = TSNE(perplexity=50, n_components=2).fit_transform(x) # you can also try n_components = 3
-    _ = scatter_thumbnails(x, df.Name.tolist(), zoom=0.06)
-    plt.title('3D t-Distributed Stochastic Neighbor Embedding')
+    x1 = PCA().fit_transform(df2['Feature_PCA'].tolist())
+    x1 = TSNE(perplexity=50, n_components=2, init='pca', random_state=123, learning_rate='auto').fit_transform(x1) # you can also try n_components = 3
+    _ = scatter_thumbnails(x1, df.Name.tolist(), zoom=0.06)
+    plt.title('2D t-Distributed Stochastic Neighbor Embedding')
+    #plt.title('3D t-Distributed Stochastic Neighbor Embedding')
     plt.show()
 
     def plot_clusters(data, algorithm, *args, **kwds):
         labels = algorithm(*args, **kwds).fit_predict(data)
         palette = sns.color_palette('deep', np.max(labels) + 1)
-        colors = [palette[x] if x >= 0 else (0,0,0) for x in labels]
-        ax = scatter_thumbnails(x, df.Name.tolist(), 0.06, colors)
-        plt.title(f'Clusters found by {algorithm.__name__}')
+        colors = [palette[i] if i >= 0 else (0,0,0) for i in labels]
+        ax = scatter_thumbnails(x1, df.Name.tolist(), 0.06, colors)
+        plt.title(f'Clusters by using {algorithm.__name__}')
         return labels
-    clusters = plot_clusters(x, hdbscan.HDBSCAN, alpha=1.0, min_cluster_size=min_cluster_size, min_samples=1)
+    clusters = plot_clusters(x1, hdbscan.HDBSCAN, alpha=1.0, min_cluster_size=min_cluster_size, min_samples=1)
 
    
     print(f"Explained components: {pca.explained_variance_ratio_}")
