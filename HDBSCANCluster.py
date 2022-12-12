@@ -110,26 +110,26 @@ if __name__ == "__main__":
     #plt.title('3D t-Distributed Stochastic Neighbor Embedding')
     plt.show()
 
-    def plot_clusters(data, algorithm, *args, **kwds):
-        labels = algorithm(*args, **kwds).fit_predict(data)
-        palette = sns.color_palette('deep', np.max(labels) + 1)
-        colors = [palette[i] if i >= 0 else (0,0,0) for i in labels]
-        ax = scatter_thumbnails(x1, df.Name.tolist(), 0.06, colors)
-        plt.title(f'Clusters by using {algorithm.__name__}')
-        return labels
-    clusters = plot_clusters(x1, hdbscan.HDBSCAN, alpha=1.0, min_cluster_size=min_cluster_size, min_samples=1)
-
-   
     print(f"Explained components: {pca.explained_variance_ratio_}")
 
     # Clustering algorithm from file "clusteringAlgorithms.py"
     labels, cluster_membership_score, silhouette_coefficients = perform_HDBSCAN(features_pca_df, min_cluster_size)
     print(f"labels of HDBSCAN:{labels}")
+    palette = sns.color_palette('deep', np.max(labels) + 1)
+    colors = [palette[i] if i >= 0 else (0,0,0) for i in labels]
+    ax = scatter_thumbnails(features_pca_df, df.Name.tolist(), 0.06, colors)
+    plt.title(f'Clusters by using HDBSCAN')
+    plt.show()
+
+    # Number of clusters in labels, ignoring noise if present.
+    HDBSCAN_number_clusters = len(set(labels)) - (1 if -1 in labels else 0)
+
 
     results_df = image_names_df
     results_df["Cluster"] = pd.DataFrame(labels)
     results_df["Cluster_membership_score"] = pd.DataFrame(cluster_membership_score)
     print(f"Silhouette Score of HDBSCAN is :{silhouette_coefficients}")
+    print(f"The number of clusters of HDBSCAN: {HDBSCAN_number_clusters}")
 
     
     #print(results_df)
