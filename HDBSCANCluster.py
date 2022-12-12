@@ -59,24 +59,28 @@ if __name__ == "__main__":
     pca = PCA(pca_variance)       
     features_pca_df = pca.fit_transform(features_df)   # the shape is (208, 32)
 
+    print(f"The dimensions of features after PCA:{features_pca_df.shape}")
+
+    
+    # using the features after PCA  
     a = np.array(features_pca_df[0]).T.tolist()
     b = np.array(features_pca_df[1]).T.tolist()
     df2 = pd.DataFrame({'Feature_PCA': [a]})
     df2.loc[len(df2.index)]=[b]
+    for i in range(2, 208):
+        c = np.array(features_pca_df[i]).T.tolist()
+        df2.loc[len(df2.index)]=[c]
     print(df2)
 
-    ######## have a try ##########
-    '''
     def scatter_thumbnails(data, images, zoom=0.12, colors=None):
         assert len(data) == len(images)
-
-        x = PCA(n_components=2).fit_transform(data) if len(data[0]) > 2 else data
+        
+        x = PCA(n_components=2).fit_transform(data) if len(data[0]) > 2 else data #do PCA again to get 2 components
 
         # create a scatter plot.
         f = plt.figure(figsize=(22, 15))
         ax = plt.subplot(aspect='equal')
         sc = ax.scatter(x[:,0], x[:,1], s=4)
-        #sc = ax.scatter(features_pca_df[:,0], features_pca_df[:,1], s=4)
         _ = ax.axis('off')
         _ = ax.axis('tight')
 
@@ -86,18 +90,33 @@ if __name__ == "__main__":
             image = plt.imread(images[i])
             im = OffsetImage(image, zoom=zoom)
             bboxprops = dict(edgecolor=colors[i]) if colors is not None else None
-            ab = AnnotationBbox(im, x[i], xycoords='features_df',
+            ab = AnnotationBbox(im, x[i], xycoords='data',
                                 frameon=(bboxprops is not None),
                                 pad=0.02,
                                 bboxprops=bboxprops)
             ax.add_artist(ab)
         return ax
 
-    scatter_thumbnails(features_df.tolist(), df.Name.tolist())
+    scatter_thumbnails(df2.Feature_PCA.tolist(), df.Name.tolist())
     plt.title('Image Visualization - Principal Component Analysis')
     plt.show()
-    '''
-    ######## until here #########
+
+    # use t-SNE to visualize the images, you can skip this part if you want
+    from sklearn.manifold import TSNE
+    x = PCA().fit_transform(df2['Feature_PCA'].tolist())
+    x = TSNE(perplexity=50, n_components=2).fit_transform(x) # you can also try n_components = 3
+    _ = scatter_thumbnails(x, df.Name.tolist(), zoom=0.06)
+    plt.title('3D t-Distributed Stochastic Neighbor Embedding')
+    plt.show()
+
+    def plot_clusters(data, algorithm, *args, **kwds):
+        labels = algorithm(*args, **kwds).fit_predict(data)
+        palette = sns.color_palette('deep', np.max(labels) + 1)
+        colors = [palette[x] if x >= 0 else (0,0,0) for x in labels]
+        ax = scatter_thumbnails(x, df.Name.tolist(), 0.06, colors)
+        plt.title(f'Clusters found by {algorithm.__name__}')
+        return labels
+    clusters = plot_clusters(x, hdbscan.HDBSCAN, alpha=1.0, min_cluster_size=min_cluster_size, min_samples=1)
 
    
     print(f"Explained components: {pca.explained_variance_ratio_}")
@@ -113,7 +132,6 @@ if __name__ == "__main__":
 
     
     #print(results_df)
-
     #cluster_labels= pd.DataFrame(labels, columns=["Cluster"])
     #results_df = pd.concat([image_names_df, labels], axis=1)
 
