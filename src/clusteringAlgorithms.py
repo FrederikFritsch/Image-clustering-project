@@ -25,7 +25,7 @@ def perform_KMeans(data, min_clusters, max_clusters):
 
 
 
-def perform_DBSCAN(data, min_cluster, max_cluster):
+def perform_DBSCAN(data, min_cluster, max_cluster):  # didn't finish, but this is similar with HDBSCAN
     #print(f"input data:{data}")
     # --------- CALCULATE DBSCAN CLUSTERS ------------
 
@@ -51,7 +51,6 @@ def perform_HDBSCAN(data, min_cluster_size):
     # --------- CALCULATE HDBSCAN CLUSTERS ------------
     silhouette_coefficients = []
     labels = []
-
     print(f"input data shape:{data.shape}")
 
     # use t-SNE plot 
@@ -59,8 +58,7 @@ def perform_HDBSCAN(data, min_cluster_size):
     plt.scatter(*projection.T,)
     plt.show()
 
-
-    #clusterer = hdbscan.HDBSCAN(cluster_selection_epsilon = 0.0001, min_cluster_size = min_cluster_size, min_samples = 1)
+    # the most important parameter is min_cluster_size
     clusterer = hdbscan.HDBSCAN(min_cluster_size=min_cluster_size, algorithm='best', alpha=1.0, approx_min_span_tree=True, 
     gen_min_span_tree=False, leaf_size=40, metric='euclidean', min_samples=1, p=None)
 
@@ -68,10 +66,8 @@ def perform_HDBSCAN(data, min_cluster_size):
     #print(clusterer.labels_)   # the labels of the clusters are [-1, -1, -1,..., -1] if the dataset only contain 6 images
     
     #Condensed Trees
-    clusterer.condensed_tree_.plot()
+    clusterer.condensed_tree_.plot(select_clusters=True)
     plt.show()
-      
-    #HDBSCAN doesn't contain "inertia_"
 
     labels = clusterer.labels_
     cluster_membership_score = clusterer.probabilities_
@@ -79,8 +75,7 @@ def perform_HDBSCAN(data, min_cluster_size):
     score = silhouette_score(data, labels)
     silhouette_coefficients.append(score)
 
-
-    # After clustering with HDBSCAN and mapping the result to the t-SNE plot generated in the figure above.
+    # After clustering with HDBSCAN and mapping the result to the t-SNE plot shown above.
     color_palette = sns.color_palette()
     cluster_colors = [color_palette[x] if x >= 0
                     else (0.5, 0.5, 0.5)
