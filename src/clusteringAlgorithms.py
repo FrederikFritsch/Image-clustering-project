@@ -74,13 +74,14 @@ def perform_HDBSCAN(data, min_cluster_size, max_cluster_size, resultspath):
     clusterer.condensed_tree_.plot(select_clusters=True)
     plt.savefig(f'{resultspath}/Condensed_Tree.png')
     
-
-    # After clustering with HDBSCAN and mapping the result to the t-SNE plot shown above.
-    #color_palette = sns.color_palette()
-    #cluster_colors = [color_palette[x] if x >= 0
-    #                else (0.5, 0.5, 0.5)
-    #                for x in labels]
-    #plt.scatter(*projection.T, s=50, linewidth=0, c=cluster_colors, alpha=0.25)
-    #plt.show()
-    
+    try:
+        # After clustering with HDBSCAN and mapping the result to the t-SNE plot shown above.
+        color_palette = sns.color_palette()
+        #cluster_colors = [color_palette[x] if x >= 0
+        #                else (0.5, 0.5, 0.5)
+        #                for x in labels]
+        #plt.scatter(*projection.T, s=50, linewidth=0, c=cluster_colors, alpha=0.25)
+        #plt.show()
+    except:
+        pass
     return labels, cluster_membership_scores, relative_validities
