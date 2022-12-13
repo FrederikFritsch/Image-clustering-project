@@ -23,7 +23,7 @@ if __name__ == "__main__":
         #min_clusters = int(args[4])      
         #max_clusters = int(args[5])
         min_cluster_size = int(args[4])   # the most important parameter for HDBSCAN is min_cluster_size
-        max_cluster_size = int(args[5])
+        max_cluster_size = int(args[5])   # this is only used in the for loop
     except Exception as e:
         print("Wrong usage of arguments.")
         print(e)
@@ -63,8 +63,8 @@ if __name__ == "__main__":
 
     print(f"The dimensions of features after PCA:{features_pca_df.shape}")
 
-    print(features_pca_df)
-    # using the features after PCA  
+
+    # reformat the features after PCA to plot the images
     a = np.array(features_pca_df[0]).T.tolist()
     b = np.array(features_pca_df[1]).T.tolist()
     df2 = pd.DataFrame({'Feature_PCA': [a]})
@@ -72,7 +72,7 @@ if __name__ == "__main__":
     for i in range(2, 208):
         c = np.array(features_pca_df[i]).T.tolist()
         df2.loc[len(df2.index)]=[c]
-    #print(df2)
+
 
     def scatter_thumbnails(data, images, zoom=0.12, colors=None):
         assert len(data) == len(images)
@@ -101,6 +101,7 @@ if __name__ == "__main__":
 
     scatter_thumbnails(df2.Feature_PCA.tolist(), df.Name.tolist())
     plt.title('Image Visualization after PCA')
+    #plt.show()
     plt.savefig(f'{resultspath}/VisualizationPCA.png')
 
 
@@ -112,23 +113,21 @@ if __name__ == "__main__":
     plt.title('2D t-Distributed Stochastic Neighbor Embedding')
     #plt.title('3D t-Distributed Stochastic Neighbor Embedding')
     plt.savefig(f'{resultspath}/2D-TSNE.png')
+    #plt.show()
 
     print(f"Explained components: {pca.explained_variance_ratio_}")
 
     # Clustering algorithm from file "clusteringAlgorithms.py"
-    labels, cluster_membership_scores, relative_validities = perform_HDBSCAN(features_pca_df, min_cluster_size, max_cluster_size, resultspath)
-    print(f"Relative validities: {relative_validities}")
-    index = np.argmax(relative_validities)
+    min_cluster_size = parameter_HDBSCAN(features_pca_df, min_cluster_size, max_cluster_size)
+    labels, cluster_membership_score, silhouette_coefficients, relative_validities = perform_HDBSCAN(features_pca_df, min_cluster_size, resultspath)
     
-    labels = labels[index]
-    cluster_membership_score = cluster_membership_scores[index]
-    relative_validity = relative_validities[index]
-
     print(f"labels of HDBSCAN:{labels}")
+
     palette = sns.color_palette('deep', np.max(labels) + 1)
     colors = [palette[i] if i >= 0 else (0,0,0) for i in labels]
     ax = scatter_thumbnails(features_pca_df, df.Name.tolist(), 0.06, colors)
     plt.title(f'Clusters by using HDBSCAN')
+    #plt.show()
     plt.savefig(f'{resultspath}/HDBSCANClusters.png')
 
     # Number of clusters in labels, ignoring noise if present.
@@ -138,13 +137,9 @@ if __name__ == "__main__":
     results_df = image_names_df
     results_df["Cluster"] = pd.DataFrame(labels)
     results_df["Cluster_membership_score"] = pd.DataFrame(cluster_membership_score)
-    print(f"Silhouette Score of HDBSCAN is :{relative_validity}")
+    print(f"Relative Validity of HDBSCAN is :{relative_validities}")
     print(f"The number of clusters of HDBSCAN: {HDBSCAN_number_clusters}")
 
-    
-    #print(results_df)
-    #cluster_labels= pd.DataFrame(labels, columns=["Cluster"])
-    #results_df = pd.concat([image_names_df, labels], axis=1)
 
     os.makedirs(f'{resultspath}', exist_ok=True)  
     results_df.to_csv(f'{resultspath}/HDBSCANResults.csv') 
