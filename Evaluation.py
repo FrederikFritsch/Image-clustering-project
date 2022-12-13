@@ -64,7 +64,7 @@ if __name__ == "__main__":
         distance_to_centroid = cluster.iloc[:, 2].to_numpy()
         image_list = []
         for image_path in cluster["Name"]:
-            image_list.append(basedir+image_path)
+            image_list.append(image_path)
         column_number = int(np.ceil(np.sqrt(len(image_list))))
         if len(image_list) > 0:
             print("Merging images")
