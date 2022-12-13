@@ -72,7 +72,7 @@ def parameter_HDBSCAN(data, min_cluster_size, max_cluster_size):
 
     return min_cluster_size
 
-
+# just check whether I push this file to github successfully
 
 
 def perform_HDBSCAN(data, min_cluster_size, resultspath):
@@ -80,7 +80,7 @@ def perform_HDBSCAN(data, min_cluster_size, resultspath):
     # --------- CALCULATE HDBSCAN CLUSTERS ------------
     import seaborn as sns
     import hdbscan
-    
+
     relative_validities = []
     silhouette_coefficients = []
     labels = []
