@@ -22,7 +22,11 @@ module load scikit-learn/0.23.2-fosscuda-2020b
 # The rest of this jobscript is handled as a usual bash script that will run
 # on the primary node (in this case there is only one node) of the allocation
 # Here you should make sure to run what you want to be run
-CLUSTER_CSV_PATH=Results/DNN/DNN-VGG16-Big/Cluster-Results.csv
-RESULT_IMG_PATH=Results/DNN/DNN-VGG16-Big/
-python3 Evaluation.py $CLUSTER_CSV_PATH $RESULTS_IMG_PATH
+CLUSTER_CSV_PATH=DNN/DNN-VGG16-Big/ClusterResults.csv
+
+RESULT_IMG_PATH=DNN/DNN-VGG16-Big/
+
+NR_IMAGES=50
+
+python3 Evaluation.py $CLUSTER_CSV_PATH $RESULT_IMG_PATH $NR_IMAGES
 

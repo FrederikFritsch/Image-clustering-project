@@ -25,7 +25,7 @@ CSV_FOLDER_NAME=DNN-VGG16-Big
 # - VGG16
 MODEL_TYPE=VGG16
 #TEST_PATH=/cephyr/NOBACKUP/groups/uu-it-gov/top20/frames/THKgFtr7J2w/
-python3 ../NeuralNetworkFeatureExtraction.py $DATA_PATH $CSV_FOLDER_NAME $MODEL_TYPE
+python3 NeuralNetworkFeatureExtraction.py $DATA_PATH $CSV_FOLDER_NAME $MODEL_TYPE
 
 
 
