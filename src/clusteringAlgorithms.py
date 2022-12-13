@@ -1,6 +1,5 @@
 from sklearn.cluster import KMeans, DBSCAN
 from sklearn.metrics import silhouette_score
-import hdbscan
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
@@ -47,6 +46,7 @@ def perform_DBSCAN(data, min_cluster, max_cluster):  # didn't finish, but this i
 
 
 def perform_HDBSCAN(data, min_cluster_size, max_cluster_size, resultspath):
+    import hdbscan
     print(f"input data:{data}")
     # --------- CALCULATE HDBSCAN CLUSTERS ------------
     relative_validities = []
