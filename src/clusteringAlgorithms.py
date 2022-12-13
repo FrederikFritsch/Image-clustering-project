@@ -1,9 +1,7 @@
 from sklearn.cluster import KMeans, DBSCAN
 from sklearn.metrics import silhouette_score
-import hdbscan
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
 from sklearn.manifold import TSNE
 
 def perform_KMeans(data, min_clusters, max_clusters):
@@ -47,12 +45,13 @@ def perform_DBSCAN(data, min_cluster, max_cluster):  # didn't finish, but this i
 
 def parameter_HDBSCAN(data, min_cluster_size, max_cluster_size):
     #print(f"input data:{data}")
-    # --------- CALCULATE HDBSCAN CLUSTERS ------------
+    import seaborn as sns
+    import hdbscan
+
     relative_validities = []
     #labels = []
     #cluster_membership_scores = []
     print(f"input data shape:{data.shape}")
-
 
     cluster_size_range = []
     # the most important parameter is min_cluster_size
@@ -79,6 +78,9 @@ def parameter_HDBSCAN(data, min_cluster_size, max_cluster_size):
 def perform_HDBSCAN(data, min_cluster_size, resultspath):
     #print(f"input data:{data}")
     # --------- CALCULATE HDBSCAN CLUSTERS ------------
+    import seaborn as sns
+    import hdbscan
+    
     relative_validities = []
     silhouette_coefficients = []
     labels = []
