@@ -12,6 +12,6 @@ clean:
 
 TraditionalHDBSCAN:
 	python3 TraditionalFeatureExtraction.py Image_Data/ Test13 640 350
-	python3 HDBSCANCluster.py Results/Test13/Test13.csv Results/Test13 Standardizing 0.6 10 20
+	python3 HDBSCANCluster.py Results/Test13/Test13.csv Results/Test13 Standardizing 0.9 10 20
 	python3 Evaluation.py Results/Test13/HDBSCANResults.csv Results/Test13/ 5
 	

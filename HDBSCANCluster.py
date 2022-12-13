@@ -60,7 +60,7 @@ if __name__ == "__main__":
 
     print(f"The dimensions of features after PCA:{features_pca_df.shape}")
 
-    
+    print(features_pca_df)
     # using the features after PCA  
     a = np.array(features_pca_df[0]).T.tolist()
     b = np.array(features_pca_df[1]).T.tolist()
@@ -69,7 +69,7 @@ if __name__ == "__main__":
     for i in range(2, 208):
         c = np.array(features_pca_df[i]).T.tolist()
         df2.loc[len(df2.index)]=[c]
-    #print(df2)
+    print(df2)
 
     def scatter_thumbnails(data, images, zoom=0.12, colors=None):
         assert len(data) == len(images)

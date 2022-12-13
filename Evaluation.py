@@ -44,19 +44,29 @@ if __name__ == "__main__":
     os.chdir(basedir+dir)
     for cluster_number in range(n_clusters):
         cluster = df.loc[df["Cluster"]==cluster_number]
-        cluster = cluster.sort_values(by=["Distance"], ascending=True, axis=0)
-        
+        print(cluster)
+        metric_string = "No metric"
+        try:
+            cluster = cluster.sort_values(by=["Distance"], ascending=True, axis=0)
+            metric_string = "Sqr dst to centroid: "
+        except:
+            pass
+        try:
+            cluster = cluster.sort_values(by=["Cluster_membership_score"], ascending=False, axis=0)
+            metric_string = "Probablility: "
+        except:
+            pass
         if cluster.shape[0] > nr_of_images:
             cluster = cluster.head(nr_of_images)
 
-        distance_to_centroid = cluster[["Distance"]].to_numpy()
+        distance_to_centroid = cluster.iloc[:, 2].to_numpy()
         image_list = []
         for image_path in cluster["Name"]:
             image_list.append(basedir+image_path)
         column_number = int(np.ceil(np.sqrt(len(image_list))))
         if len(image_list) > 0:
             print("Merging images")
-            merged_image = combine_images(columns=column_number, space=10, images=image_list, distances=distance_to_centroid)
+            merged_image = combine_images(columns=column_number, space=10, images=image_list, distances=distance_to_centroid, metric_string = metric_string)
             merged_image.save(str(cluster_number)+".png")
             merged_image.show()
 

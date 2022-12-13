@@ -20,7 +20,7 @@ def resize_image(image, size, method="Lanczos"):
         image = cv.resize(image, size, interpolation=cv.INTER_NEAREST)
     return image
 3
-def combine_images(columns, space, images, distances):
+def combine_images(columns, space, images, distances, metric_string):
     from PIL import Image, ImageDraw
     rows = len(images) // columns
     if len(images) % columns:
@@ -42,7 +42,7 @@ def combine_images(columns, space, images, distances):
     x = 0
     y = 0
     for i, image in enumerate(images):
-        text = "Sqrd dst to centroid: " + str(distances[i])
+        text = str(metric_string) + str(distances[i])
         img = Image.open(image)
         x_offset = int((width_max-img.width)/2)
         y_offset = int((height_max-img.height)/2)
