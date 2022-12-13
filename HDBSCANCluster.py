@@ -4,7 +4,6 @@ import os
 import time
 import sys
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, Normalizer
-# from sklearn.preprocessing import normalize
 from sklearn.decomposition import PCA
 from src.clusteringAlgorithms import *
 from src.featureExtraction import *
@@ -143,12 +142,15 @@ if __name__ == "__main__":
 
     # Number of clusters in labels, ignoring noise if present.
     HDBSCAN_number_clusters = len(set(labels)) - (1 if -1 in labels else 0)
+    HDBSCAN_number_noise = list(labels).count(-1)
 
     results_df = image_names_df
     results_df["Cluster"] = pd.DataFrame(labels)
     results_df["Cluster_membership_score"] = pd.DataFrame(cluster_membership_score)
     print(f"Relative Validity of HDBSCAN is :{relative_validities}")
     print(f"The number of clusters of HDBSCAN: {HDBSCAN_number_clusters}")
+    print("Estimated number of noise points: %d" % HDBSCAN_number_noise)
+
 
 
     os.makedirs(f'{resultspath}', exist_ok=True)
