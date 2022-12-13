@@ -2,7 +2,6 @@ from sklearn.cluster import KMeans, DBSCAN
 from sklearn.metrics import silhouette_score
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
 from sklearn.manifold import TSNE
 
 def perform_KMeans(data, min_clusters, max_clusters):
@@ -46,6 +45,7 @@ def perform_DBSCAN(data, min_cluster, max_cluster):  # didn't finish, but this i
 
 
 def perform_HDBSCAN(data, min_cluster_size, max_cluster_size, resultspath):
+    import seaborn as sns
     import hdbscan
     print(f"input data:{data}")
     # --------- CALCULATE HDBSCAN CLUSTERS ------------
