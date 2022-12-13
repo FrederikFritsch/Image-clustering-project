@@ -23,10 +23,9 @@ DATA_PATH=/cephyr/NOBACKUP/groups/uu-it-gov/frames/
 CSV_FOLDER_NAME=DNN-VGG16-Big
 # CURRENTLY SUPPORTED PRE-TRAINED MODELS ARE:
 # - VGG16
-# - XCEPTION
 MODEL_TYPE=VGG16
 #TEST_PATH=/cephyr/NOBACKUP/groups/uu-it-gov/top20/frames/THKgFtr7J2w/
-python3 NeuralNetworkFeatureExtraction.py $DATA_PATH $CSV_FOLDER_NAME $MODEL_TYPE
+python3 ../NeuralNetworkFeatureExtraction.py $DATA_PATH $CSV_FOLDER_NAME $MODEL_TYPE
 
 
 
