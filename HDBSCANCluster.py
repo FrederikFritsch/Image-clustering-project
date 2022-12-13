@@ -3,7 +3,7 @@ import pandas as pd
 import os
 import time
 import sys
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler, Normalizer
 # from sklearn.preprocessing import normalize
 from sklearn.decomposition import PCA
 from src.clusteringAlgorithms import *
@@ -23,7 +23,7 @@ if __name__ == "__main__":
         #min_clusters = int(args[4])      
         #max_clusters = int(args[5])
         min_cluster_size = int(args[4])   # the most important parameter for HDBSCAN is min_cluster_size
-        #max_cluster_size = int(args[5])
+        max_cluster_size = int(args[5])
     except Exception as e:
         print("Wrong usage of arguments.")
         print(e)
@@ -42,14 +42,17 @@ if __name__ == "__main__":
     features_df = df.loc[:, df.columns[1:]]  # get all features without column names
     image_names_df = df.loc[:, ['Name']]     # get all image names with column name
     
-    if normalization_method == "normalize":      # K-means use "Normalize"
-        print("Normalizing")
+    if normalization_method == "MinMax":
+        print("Min Max transforming")
         scaler = MinMaxScaler()
         features_df = scaler.fit_transform(features_df)
+    elif normalization_method == "Normalize":
+        print("Normalizing")
+        scaler = Normalizer()
+        features_df = scaler.fit_transform(features_df)        
     else:
         scaler = StandardScaler()
         print("Standardizing")
-        #scaler.fit(features_df)
         features_df = scaler.fit_transform(features_df)  # DBSCAN and HDBSCAN use "Standardize" # equal to "StandardScaler().fit_transform(features_df)"
 
     #print(features_df) # features after normalization/standardization # the shape is (208, 1191)
@@ -69,7 +72,7 @@ if __name__ == "__main__":
     for i in range(2, 208):
         c = np.array(features_pca_df[i]).T.tolist()
         df2.loc[len(df2.index)]=[c]
-    print(df2)
+    #print(df2)
 
     def scatter_thumbnails(data, images, zoom=0.12, colors=None):
         assert len(data) == len(images)
@@ -98,7 +101,7 @@ if __name__ == "__main__":
 
     scatter_thumbnails(df2.Feature_PCA.tolist(), df.Name.tolist())
     plt.title('Image Visualization after PCA')
-    plt.show()
+    plt.savefig(f'{resultspath}/VisualizationPCA.png')
 
 
     # use t-SNE to visualize the images, you can skip this part if you want
@@ -108,18 +111,25 @@ if __name__ == "__main__":
     _ = scatter_thumbnails(x1, df.Name.tolist(), zoom=0.06)
     plt.title('2D t-Distributed Stochastic Neighbor Embedding')
     #plt.title('3D t-Distributed Stochastic Neighbor Embedding')
-    plt.show()
+    plt.savefig(f'{resultspath}/2D-TSNE.png')
 
     print(f"Explained components: {pca.explained_variance_ratio_}")
 
     # Clustering algorithm from file "clusteringAlgorithms.py"
-    labels, cluster_membership_score, silhouette_coefficients = perform_HDBSCAN(features_pca_df, min_cluster_size)
+    labels, cluster_membership_scores, relative_validities = perform_HDBSCAN(features_pca_df, min_cluster_size, max_cluster_size, resultspath)
+    print(f"Relative validities: {relative_validities}")
+    index = np.argmax(relative_validities)
+    
+    labels = labels[index]
+    cluster_membership_score = cluster_membership_scores[index]
+    relative_validity = relative_validities[index]
+
     print(f"labels of HDBSCAN:{labels}")
     palette = sns.color_palette('deep', np.max(labels) + 1)
     colors = [palette[i] if i >= 0 else (0,0,0) for i in labels]
     ax = scatter_thumbnails(features_pca_df, df.Name.tolist(), 0.06, colors)
     plt.title(f'Clusters by using HDBSCAN')
-    plt.show()
+    plt.savefig(f'{resultspath}/HDBSCANClusters.png')
 
     # Number of clusters in labels, ignoring noise if present.
     HDBSCAN_number_clusters = len(set(labels)) - (1 if -1 in labels else 0)
@@ -128,7 +138,7 @@ if __name__ == "__main__":
     results_df = image_names_df
     results_df["Cluster"] = pd.DataFrame(labels)
     results_df["Cluster_membership_score"] = pd.DataFrame(cluster_membership_score)
-    print(f"Silhouette Score of HDBSCAN is :{silhouette_coefficients}")
+    print(f"Silhouette Score of HDBSCAN is :{relative_validity}")
     print(f"The number of clusters of HDBSCAN: {HDBSCAN_number_clusters}")
 
     

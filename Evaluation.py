@@ -44,7 +44,6 @@ if __name__ == "__main__":
     os.chdir(basedir+dir)
     for cluster_number in range(n_clusters):
         cluster = df.loc[df["Cluster"]==cluster_number]
-        print(cluster)
         metric_string = "No metric"
         try:
             cluster = cluster.sort_values(by=["Distance"], ascending=True, axis=0)
