@@ -23,24 +23,52 @@ def perform_KMeans(data, min_clusters, max_clusters):
 
 
 
-def perform_DBSCAN(data, min_cluster, max_cluster):  # didn't finish, but this is similar with HDBSCAN
+def parameter_DBSCAN(data, min_epsilon, max_epsilon, min_samples):
     #print(f"input data:{data}")
     # --------- CALCULATE DBSCAN CLUSTERS ------------
     silhouette_coefficients = []
-    #labels = []
 
-    # Compute DBSCAN
-    db = DBSCAN(eps=0.3, min_samples=10).fit(data)
+    epsilon_range = []
+    # the most important parameter is min_cluster_size
+    for epsilon in range(min_epsilon, max_epsilon+1):
+        epsilon_range.append(epsilon)
+        db = DBSCAN(eps=epsilon, min_samples=min_samples, metric='euclidean', metric_params=None, algorithm='auto', leaf_size=30, p=None, n_jobs=None)
+        db = db.fit(data)
+
+        #labels.append(clusterer.labels_)
+        #score = silhouette_score(data, clusterer.labels_)
+        #relative_validities.append(clusterer.relative_validity_)
+        #cluster_membership_scores.append(clusterer.probabilities_)
+
+
     core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
     core_samples_mask[db.core_sample_indices_] = True
     labels = db.labels_
-    
-    #sse.append(0)       
-    # DBSCAN doesn't contain "inertia_"
-    score = 0# silhouette_score(data, clusterer.labels_)
+
+    score = silhouette_score(data, labels)
     silhouette_coefficients.append(score)
-    #labels.append(clusterer.labels_)    
-    return score, silhouette_coefficients, labels
+   
+    return labels, silhouette_coefficients
+
+
+
+def perform_DBSCAN(data, epsilon, min_samples):
+    #print(f"input data:{data}")
+    # --------- CALCULATE DBSCAN CLUSTERS ------------
+    silhouette_coefficients = []
+
+    # Compute DBSCAN
+    db = DBSCAN(eps=epsilon, min_samples=min_samples, metric='euclidean', metric_params=None, algorithm='auto', leaf_size=30, p=None, n_jobs=None)
+    db = db.fit(data)
+
+    core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
+    core_samples_mask[db.core_sample_indices_] = True
+    labels = db.labels_
+
+    score = silhouette_score(data, labels)
+    silhouette_coefficients.append(score)
+   
+    return labels, silhouette_coefficients
 
 
 def parameter_HDBSCAN(data, min_cluster_size, max_cluster_size):
