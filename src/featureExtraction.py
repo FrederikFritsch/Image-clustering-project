@@ -110,7 +110,7 @@ def orb_feature_extraction(feature_vector, image, size):
     return feature_vector
 
 
-def traditional_feature_extraction(path, size=(640, 350)):
+def traditional_feature_extraction(path, size=(640, 350), colorfeature=1, ROIColorfeature=0, edgefeature=0, LBPfeature=0, orbfeature=0):
     import matplotlib.pyplot as plt
     import cv2 as cv
     # print(path)
@@ -121,11 +121,16 @@ def traditional_feature_extraction(path, size=(640, 350)):
     name_df = {}
     name_df["Name"] = path
     feature_vector = {}
-    #feature_vector = ROI_color_feature_extraction(feature_vector, image)
-    feature_vector = color_feature_extraction(feature_vector, image)
-    #feature_vector = canny_edge_feature_extraction(feature_vector, grey_image)
-    #feature_vector = binaryPatterns(feature_vector, grey_image, 24, 8)
-    #feature_vector = orb_feature_extraction(feature_vector, image, size)
+    if colorfeature:
+        feature_vector = color_feature_extraction(feature_vector, image)
+    if ROIColorfeature:
+        feature_vector = ROI_color_feature_extraction(feature_vector, image)
+    if edgefeature:    
+        feature_vector = canny_edge_feature_extraction(feature_vector, grey_image)
+    if LBPfeature:
+        feature_vector = binaryPatterns(feature_vector, grey_image, 24, 8)
+    if orbfeature:
+        feature_vector = orb_feature_extraction(feature_vector, image, size)
     name_df = pd.DataFrame([name_df])
     df1 = pd.DataFrame([feature_vector])
     returndf = name_df.join(df1)

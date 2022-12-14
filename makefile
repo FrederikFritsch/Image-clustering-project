@@ -1,6 +1,6 @@
 
 TraditionalKmeans:
-	python3 TraditionalFeatureExtraction.py Image_Data/ Test12 640 350
+	python3 TraditionalFeatureExtraction.py /Users/frederikfritsch/Plugg/Image-clustering-project/Image_Data/ Test12 640 350 1 0 0 0 0
 	python3 KMeansClustering.py Test12/Test12.csv Test12 Normalize 0.8 10 20
 	python3 Evaluation.py Test12/KMeansResults.csv Test12/ 15
 

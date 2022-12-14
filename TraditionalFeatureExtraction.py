@@ -15,6 +15,11 @@ if __name__ == "__main__":
         filename = str(args[1])
         image_size_x = int(args[2])
         image_size_y = int(args[3])
+        colorfeature = int(args[4])
+        ROIColorfeature = int(args[5])
+        edgefeature = int(args[6])
+        LBPfeature = int(args[7])
+        orbfeature = int(args[8])
 
     except Exception as e:
         print("Wrong usage of arguments.")
@@ -33,7 +38,7 @@ if __name__ == "__main__":
     # Feature Extraction
     dataframe_list = []
     for path in all_image_paths:
-        dataframe = traditional_feature_extraction(path, (image_size_x, image_size_y))
+        dataframe = traditional_feature_extraction(path, (image_size_x, image_size_y), colorfeature, ROIColorfeature, edgefeature, LBPfeature, orbfeature)
         dataframe_list.append(dataframe)
     df = pd.concat(dataframe_list, ignore_index=True)
     if take_time:
