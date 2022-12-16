@@ -91,10 +91,6 @@ Example on how to run this file:
 
 ---
 ## 📝License
-This work is licensed under a
-[Creative Commons Zero v1.0 Universal](https://github.com/FrederikFritsch/Image-clustering-project/blob/main/LICENSE.md)
+Licensed under the [MIT](https://github.com/FrederikFritsch/Image-clustering-project/blob/main/LICENSE.md) license.  
 
-[![CC BY 4.0][cc-by-image]][cc-by]
 
-[cc-by]: [http://creativecommons.org/licenses/by/4.0/](https://github.com/FrederikFritsch/Image-clustering-project/blob/main/LICENSE.md)
-[cc-by-image]: https://i.creativecommons.org/l/by/4.0/88x31.png
