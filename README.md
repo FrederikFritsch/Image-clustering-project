@@ -22,6 +22,11 @@ Step-by-step guide:
 We have provided scripts to run all modules on [Alvis](https://www.c3se.chalmers.se/about/Alvis/), but the python files can of be run on any computer.
 
 ## 🚀 Modules
+This repo is structured using modules that can be executed independently. Each module stores the results in the /Results folder after execution.  
+
+- The results from the "Feature Extraction Modules" can be used in the "Clustering Modules".  
+- The results from the "Clustering Modules" can be used on the "Evaluation Module".  
+
 ![Modules](https://iili.io/HoD1lLX.png)
 ### Feature Extraction
 Generate a dataframe and save it as a .csv with the following options:
