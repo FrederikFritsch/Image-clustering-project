@@ -88,8 +88,20 @@ Example on how to run this file:
 ### Clustering
 #### K-Means Clustering
 This module performs clustering through K-Means.
+**Command to Run The File**  
+```python3 KMeansClustering.py $DATA_FILE_PATH $RESULTS_PATH $NORMALIZATION_METHOD $PCA_VARIANCE $MIN_K $MAX_K ```  
+  
+Where the inputs are the following:
+* DATA_FILE_PATH = Path where the file with the data is located 
+* RESULTS_PATH = Name of the folder where the resulting dataframe will be stored
+* NORMALIZATION_METHOD = Method for Normalization. MinMax || Normalize || Standardize
+* PCA_VARIANCE = Ratio of explained variance
+* MIN_K = Minimum value for K
+* MAX_K = Maximum value for K
+
 Example on how to run this file:
 ```python3 KMeansClustering.py Test12/Test12.csv Test12 Normalize 0.8 10 20```
+
 #### DBSCAN Clustering
 This module performs clustering through DBSCAN.
 #### HDBSCAN clustering
@@ -99,6 +111,8 @@ This module performs clustering through HDBSCAN.
 
 ### Evaluation and Plotting Module
 This module plots merged images for inspection evaluation and more.
+Needs the output of a clustering algorithm as an input. Last argument decides how many images of each cluster is plotted.
+
 Example on how to run this file:
 ```python3 Evaluation.py Test12/KMeansResults.csv Test12/ 15```  
 
