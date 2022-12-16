@@ -39,17 +39,25 @@ This module extracts features from images without using pre-trained neural netwo
 * ORB descriptors
 
 **Command to Run The File**  
-```python3 TraditionalFeatureExtraction.py $DATA_PATH $CSV_FOLDER_NAME $WIDTH $HEIGHT ```  
+```python3 TraditionalFeatureExtraction.py $DATA_PATH $CSV_FOLDER_NAME $WIDTH $HEIGHT $RESIZE_METHOD $COLORFEATURES $ROICOLORFEATURES $EDGEFEATURES $LBPFEATURES $ORBFEATURES```  
   
 Where the inputs are the following:
 * DATA_PATH = Path where the images are located
 * CSV_FOLDER_NAME = Name of the folder where the resulting dataframe will be stored
-* MODEL_TYPE = VGG16 || XCEPTION
-
+* WIDTH = Width to resize the image to
+* HEIGHT = Height to resize the image to
+* RESIZE_METHOD = Method to use for resizing. Lanczos || Area || Linear || Cubic
+* COLORFEATURES = Use color features? 0 || 1
+* ROICOLORFEATURES = Use ROI color features? 0 || 1
+* EDGEFEATURES = Use canny edge features? 0 || 1
+* LBPFEATURES = Use LBP features? 0 || 1
+* ORBFEATURES = Use ORB keypoint features? 0 || 1
 
 
 Example on how to run this file:  
-```python3 TraditionalFeatureExtraction.py Image_Data/ Test12 640 350```  
+```python3 TraditionalFeatureExtraction.py Image_Data/ Test12 640 350 Lanczos 1 0 0 1 0```  
+
+This will extract features from images inside the folder Image_Data/ and put the results in the folder Test12. The images will be resized to 640x350 using Lanczos algorithm and Color features + LBP features will be extracted.
 
 ---
 
