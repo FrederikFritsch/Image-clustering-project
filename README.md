@@ -1,3 +1,8 @@
+[![MIT licensed][shield-license]](#)
+
+[shield-license]: https://img.shields.io/badge/license-MIT-blue.svg
+
+
 # Software for Image Clustering
 Authors: Frederik Fritsch, Lu Chen, Vladislav Bertilsson
 
