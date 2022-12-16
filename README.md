@@ -33,6 +33,16 @@ This module extracts features from images without using pre-trained neural netwo
 * Contour moments
 * ORB descriptors
 
+**Command to Run The File**  
+```python3 TraditionalFeatureExtraction.py $DATA_PATH $CSV_FOLDER_NAME $WIDTH $HEIGHT ```  
+  
+Where the inputs are the following:
+* DATA_PATH = Path where the images are located
+* CSV_FOLDER_NAME = Name of the folder where the resulting dataframe will be stored
+* MODEL_TYPE = VGG16 || XCEPTION
+
+
+
 Example on how to run this file:  
 ```python3 TraditionalFeatureExtraction.py Image_Data/ Test12 640 350```  
 
