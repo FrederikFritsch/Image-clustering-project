@@ -130,7 +130,7 @@ Where the inputs are the following:
 * RESULTS_PATH = Name of the folder where the resulting dataframe will be stored
 * NORMALIZATION_METHOD = Method for Normalization. MinMax || Normalize || Standardize
 * PCA_VARIANCE = Ratio of explained variance
-* min_cluster_size, max_cluster_size = to find the opimal value of min_cluster_size parameter in the range between min_cluster_size and max_cluster_size in DBSCAN
+* min_cluster_size, max_cluster_size = to find the opimal value of min_cluster_size parameter in the range between min_cluster_size and max_cluster_size in HDBSCAN
 
 Example on how to run this file:
 ```python3 HDBSCANCluster.py Test12/Test12.csv Test12 Standardizing 0.9 3 10```
