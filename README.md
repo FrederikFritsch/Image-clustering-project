@@ -104,8 +104,37 @@ Example on how to run this file:
 
 #### DBSCAN Clustering
 This module performs clustering through DBSCAN.
+**Command to Run The File**  
+```python3 DBSCANCluster.py $DATA_FILE_PATH $RESULTS_PATH $NORMALIZATION_METHOD $PCA_VARIANCE $min_epsilon $max_epsilon $min_samples $max_samples ```  
+  
+Where the inputs are the following:
+* DATA_FILE_PATH = Path where the file with the data is located 
+* RESULTS_PATH = Name of the folder where the resulting dataframe will be stored
+* NORMALIZATION_METHOD = Method for Normalization. MinMax || Normalize || Standardize
+* PCA_VARIANCE = Ratio of explained variance
+* min_epsilon, max_epsilon = to find the opimal value of eps parameter in the range between min_epsilon and max_epsilon in DBSCAN
+* min_samples, max_samples = to find the opimal value of min_samples parameter in the range between min_samples and max_samples in DBSCAN
+
+Example on how to run this file:
+```python3 DBSCANCluster.py Test12/Test12.csv Test12 Standardizing 0.9 8 12 3 10```
+
+
 #### HDBSCAN clustering
-This module performs clustering through HDBSCAN.  
+This module performs clustering through HDBSCAN. 
+
+**Command to Run The File**  
+```python3 HDBSCANCluster.py $DATA_FILE_PATH $RESULTS_PATH $NORMALIZATION_METHOD $PCA_VARIANCE $min_cluster_size $max_cluster_size ```  
+  
+Where the inputs are the following:
+* DATA_FILE_PATH = Path where the file with the data is located 
+* RESULTS_PATH = Name of the folder where the resulting dataframe will be stored
+* NORMALIZATION_METHOD = Method for Normalization. MinMax || Normalize || Standardize
+* PCA_VARIANCE = Ratio of explained variance
+* min_cluster_size, max_cluster_size = to find the opimal value of min_cluster_size parameter in the range between min_cluster_size and max_cluster_size in DBSCAN
+
+Example on how to run this file:
+```python3 HDBSCANCluster.py Test12/Test12.csv Test12 Standardizing 0.9 3 10```
+
 
 ---
 
