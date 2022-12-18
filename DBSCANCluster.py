@@ -36,6 +36,7 @@ if __name__ == "__main__":
     except Exception as e:
         print(e)
         quit()
+        
 
     # print(df) # print dataframe with features and image names with colomn names # the shape is (208, 1192)
 

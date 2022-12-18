@@ -23,32 +23,55 @@ def perform_KMeans(data, min_clusters, max_clusters):
 
 
 
-def parameter_DBSCAN(data, min_epsilon, max_epsilon, min_samples):
+def parameter_DBSCAN(data, min_epsilon, max_epsilon, min_samples, max_samples, resultspath):
     #print(f"input data:{data}")
     # --------- CALCULATE DBSCAN CLUSTERS ------------
+    from itertools import product
+    import pandas as pd
+    import seaborn as sns
+    epsilon_range = np.arange(min_epsilon, max_epsilon, 0.25) 
+    min_samples_range = np.arange(min_samples, max_samples) 
+    parameters = list(product(epsilon_range, min_samples_range))
+
+    number_of_clusters = []
     silhouette_coefficients = []
 
-    epsilon_range = []
-    # the most important parameter is min_cluster_size
-    for epsilon in range(min_epsilon, max_epsilon+1):
-        epsilon_range.append(epsilon)
-        db = DBSCAN(eps=epsilon, min_samples=min_samples, metric='euclidean', metric_params=None, algorithm='auto', leaf_size=30, p=None, n_jobs=None)
-        db = db.fit(data)
+    for i in parameters:
+        clusterer = DBSCAN(eps=i[0], min_samples=i[1], metric='euclidean', metric_params=None, algorithm='auto', p=None, n_jobs=-1)
+        clusterer = clusterer.fit(data)
 
-        #labels.append(clusterer.labels_)
-        #score = silhouette_score(data, clusterer.labels_)
-        #relative_validities.append(clusterer.relative_validity_)
-        #cluster_membership_scores.append(clusterer.probabilities_)
+        labels = clusterer.labels_
+        number_of_clusters.append(len(np.unique(labels)))
+        score = silhouette_score(data, labels)
+        silhouette_coefficients.append(score)
 
+    parameter_df = pd.DataFrame.from_records(parameters, columns =['Epsilon', 'Min_samples'])   
+    parameter_df['silhouette_score'] = silhouette_coefficients
+    # print(parameter_df)
 
-    core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
-    core_samples_mask[db.core_sample_indices_] = True
-    labels = db.labels_
+    # for i in range(len(parameters)):
+    ind = parameter_df['silhouette_score'].idxmax()
+    row = parameter_df.iloc[ind,:]
+    epsilon = row[0]
+    min_sample = row[1].astype('int')
+    print(min_sample)
 
-    score = silhouette_score(data, labels)
-    silhouette_coefficients.append(score)
+    #    print(parameter_table[silhouette_coefficients][i])
+    #    if parameter_table[silhouette_coefficients][i] == np.max(silhouette_coefficients):
+    #        print(i)
+
+    pivot_1 = pd.pivot_table(parameter_df, values='silhouette_score', index='Min_samples', columns='Epsilon')
+
+    fig, ax = plt.subplots(figsize=(18,6))
+    sns.heatmap(pivot_1, annot=True, annot_kws={"size": 10}, cmap="YlGnBu", ax=ax)
+    #plt.show()
+    plt.savefig(f'{resultspath}/Parameters_Heatmap.png')
+
+    #core_samples_mask = np.zeros_like(clusterer.labels_, dtype=bool)
+    #core_samples_mask[clusterer.core_sample_indices_] = True
+    #labels = clusterer.labels_
    
-    return labels, silhouette_coefficients
+    return epsilon, min_sample
 
 
 
@@ -61,14 +84,15 @@ def perform_DBSCAN(data, epsilon, min_samples):
     db = DBSCAN(eps=epsilon, min_samples=min_samples, metric='euclidean', metric_params=None, algorithm='auto', leaf_size=30, p=None, n_jobs=None)
     db = db.fit(data)
 
-    core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
-    core_samples_mask[db.core_sample_indices_] = True
+    #core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
+    #core_samples_mask[db.core_sample_indices_] = True
     labels = db.labels_
 
     score = silhouette_score(data, labels)
     silhouette_coefficients.append(score)
    
     return labels, silhouette_coefficients
+
 
 
 def parameter_HDBSCAN(data, min_cluster_size, max_cluster_size):
@@ -100,7 +124,6 @@ def parameter_HDBSCAN(data, min_cluster_size, max_cluster_size):
 
     return min_cluster_size
 
-# just check whether I push this file to github successfully
 
 
 def perform_HDBSCAN(data, min_cluster_size, resultspath):
