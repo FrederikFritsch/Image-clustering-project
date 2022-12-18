@@ -12,9 +12,6 @@ import seaborn as sns
 
 
 
-# just check whether I push this file to github successfully
-
-
 if __name__ == "__main__":
     args = sys.argv[1:]
     if len(args) == 0:
@@ -150,7 +147,6 @@ if __name__ == "__main__":
     print(f"Relative Validity of HDBSCAN is :{relative_validities}")
     print(f"The number of clusters of HDBSCAN: {HDBSCAN_number_clusters}")
     print("Estimated number of noise points: %d" % HDBSCAN_number_noise)
-
 
 
     os.makedirs(f'{resultspath}', exist_ok=True)

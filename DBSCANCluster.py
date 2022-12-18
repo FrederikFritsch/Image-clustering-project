@@ -22,10 +22,10 @@ if __name__ == "__main__":
         resultspath = "Results/" + resultspath
         normalization_method = str(args[2])
         pca_variance = float(args[3])     # how to decide the value of this by ourselves?
-        #min_clusters = int(args[4])      
-        #max_clusters = int(args[5])
-        min_cluster_size = int(args[4])   # the most important parameter for HDBSCAN is min_cluster_size
-        max_cluster_size = int(args[5])   # this is only used in the for loop
+        min_epsilon = int(args[4])   # the most important parameters for DBSCAN are epsilon and min_samples
+        max_epsilon = int(args[5])   # used in the for loop
+        min_samples = int(args[6]) 
+        max_samples = int(args[7]) 
     except Exception as e:
         print("Wrong usage of arguments.")
         print(e)
@@ -121,27 +121,26 @@ if __name__ == "__main__":
     print(f"Explained components: {pca.explained_variance_ratio_}")
 
     # Clustering algorithm from file "clusteringAlgorithms.py"
-    min_cluster_size = parameter_HDBSCAN(features_pca_df, min_cluster_size, max_cluster_size)
-    labels, cluster_membership_score, silhouette_coefficients, relative_validities = perform_HDBSCAN(features_pca_df, min_cluster_size, resultspath)
-    #clusters = plot_clusters(x, cluster.DBSCAN, n_jobs=-1, eps=1.0, min_samples=1)
-    print(f"labels of HDBSCAN:{labels}")
+    epsilon, min_sample = parameter_DBSCAN(features_pca_df, min_epsilon, max_epsilon, min_samples, max_samples, resultspath)
+    labels, silhouette_coefficients = perform_DBSCAN(features_pca_df, epsilon=epsilon, min_samples=min_sample)
+    print(f"labels of DBSCAN:{labels}")
 
     palette = sns.color_palette('deep', np.max(labels) + 1)
     colors = [palette[i] if i >= 0 else (0, 0, 0) for i in labels]
     ax = scatter_thumbnails(features_pca_df, df.Name.tolist(), 0.06, colors)
-    plt.title(f'Clusters by using HDBSCAN')
+    plt.title(f'Clusters by using DBSCAN')
     #plt.show()
-    plt.savefig(f'{resultspath}/HDBSCANClusters.png')
+    plt.savefig(f'{resultspath}/DBSCANClusters.png')
 
     # Number of clusters in labels, ignoring noise if present.
-    HDBSCAN_number_clusters = len(set(labels)) - (1 if -1 in labels else 0)
+    DBSCAN_number_clusters = len(set(labels)) - (1 if -1 in labels else 0)
 
     results_df = image_names_df
     results_df["Cluster"] = pd.DataFrame(labels)
-    results_df["Cluster_membership_score"] = pd.DataFrame(cluster_membership_score)
-    print(f"Relative Validity of HDBSCAN is :{relative_validities}")
-    print(f"The number of clusters of HDBSCAN: {HDBSCAN_number_clusters}")
+    #results_df["Cluster_membership_score"] = pd.DataFrame(cluster_membership_score)
+    #print(f"Relative Validity of DBSCAN is :{relative_validities}")
+    print(f"The number of clusters of DBSCAN: {DBSCAN_number_clusters}")
 
 
     os.makedirs(f'{resultspath}', exist_ok=True)
-    results_df.to_csv(f'{resultspath}/HDBSCANResults.csv')
+    results_df.to_csv(f'{resultspath}/DBSCANResults.csv')
