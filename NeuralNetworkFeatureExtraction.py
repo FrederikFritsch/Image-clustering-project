@@ -32,6 +32,8 @@ if __name__ == "__main__":
         print("Wrong usage of arguments.")
         print(e)
         quit()
+
+#Get image paths
 all_image_paths = get_image_paths(data_path)
 
 model, image_size = preTrainedModelPick(model_name)
