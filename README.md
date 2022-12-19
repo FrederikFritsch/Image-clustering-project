@@ -124,7 +124,7 @@ This module performs clustering through HDBSCAN.
 
 **Command to Run The File**  
 ```python3 HDBSCANCluster.py $DATA_FILE_PATH $RESULTS_PATH $NORMALIZATION_METHOD $PCA_VARIANCE $min_cluster_size $max_cluster_size ```  
-  
+
 Where the inputs are the following:
 * DATA_FILE_PATH = Path where the file with the data is located 
 * RESULTS_PATH = Name of the folder where the resulting dataframe will be stored

@@ -64,8 +64,8 @@ def parameter_DBSCAN(data, min_epsilon, max_epsilon, min_samples, max_samples, r
 
     fig, ax = plt.subplots(figsize=(18,6))
     sns.heatmap(pivot_1, annot=True, annot_kws={"size": 10}, cmap="YlGnBu", ax=ax)
-    #plt.show()
-    plt.savefig(f'{resultspath}/Parameters_Heatmap.png')
+    plt.show()
+    #plt.savefig(f'{resultspath}/Parameters_Heatmap.png')
 
     #core_samples_mask = np.zeros_like(clusterer.labels_, dtype=bool)
     #core_samples_mask[clusterer.core_sample_indices_] = True

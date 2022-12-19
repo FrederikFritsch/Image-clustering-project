@@ -22,8 +22,8 @@ if __name__ == "__main__":
         resultspath = "Results/" + resultspath
         normalization_method = str(args[2])
         pca_variance = float(args[3])     # how to decide the value of this by ourselves?
-        min_epsilon = int(args[4])   # the most important parameters for DBSCAN are epsilon and min_samples
-        max_epsilon = int(args[5])   # used in the for loop
+        min_epsilon = float(args[4])   # the most important parameters for DBSCAN are epsilon and min_samples
+        max_epsilon = float(args[5])   # used in the for loop
         min_samples = int(args[6]) 
         max_samples = int(args[7]) 
     except Exception as e:
@@ -36,7 +36,7 @@ if __name__ == "__main__":
     except Exception as e:
         print(e)
         quit()
-        
+
 
     # print(df) # print dataframe with features and image names with colomn names # the shape is (208, 1192)
 
