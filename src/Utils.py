@@ -2,13 +2,26 @@ import numpy as np
 import os
 
 
-def saveFeaturesInCSV(folder, filename, features):
+def saveDataFrameAsCSV(folder, filename, features):
     os.makedirs(f'{folder}{filename}', exist_ok=True)
     features.to_csv(f'{folder}{filename}/{filename}.csv')
 
-
-def combine_images(columns, space, images):
-    from PIL import Image
+def resize_image(image, size, method="Lanczos"):
+    import cv2 as cv
+    if method == "Lanczos":
+        image = cv.resize(image, size, interpolation=cv.INTER_LANCZOS4)
+    elif method == "Area":
+        image = cv.resize(image, size, interpolation=cv.INTER_AREA)
+    elif method == "Linear":        
+        image = cv.resize(image, size, interpolation=cv.INTER_LINEAR)
+    elif method == "Cubic":
+        image = cv.resize(image, size, interpolation=cv.INTER_CUBIC)
+    else:
+        image = cv.resize(image, size, interpolation=cv.INTER_NEAREST)
+    return image
+3
+def combine_images(columns, space, images, distances, metric_string):
+    from PIL import Image, ImageDraw
     rows = len(images) // columns
     if len(images) % columns:
         rows += 1
@@ -29,9 +42,12 @@ def combine_images(columns, space, images):
     x = 0
     y = 0
     for i, image in enumerate(images):
+        text = str(metric_string) + str(distances[i])
         img = Image.open(image)
         x_offset = int((width_max-img.width)/2)
         y_offset = int((height_max-img.height)/2)
+        i1 = ImageDraw.Draw(img).text((10,5), text, (0,0,0))
+        i2 = ImageDraw.Draw(img).text((10,15), text, (255,255,255))
         background.paste(img, (x+x_offset, y+y_offset))
         x += width_max + space
         if (i+1) % columns == 0:
@@ -45,29 +61,19 @@ def get_image_paths(data_path):
     all_paths = []
     print("Getting paths")
     #print("Data Path is : " + str(data_path))
-    #print(os.walk(data_path))
+    # print(os.walk(data_path))
+    
+    max_images = 5  #nr of max images to use per directory
     for index, directories in enumerate(os.walk(data_path)):
-        #print(directories)
+        # print(directories)
+        i = 0
         for sample in directories[2]:
             # print(sample)
+            if i >= max_images:
+                break
             if sample.endswith('.png'):
                 full_path = directories[0] + "/" + sample
                 all_paths.append(full_path)
+                i += 1
     print(len(all_paths))
     return all_paths
-
-
-def create_gabor_filters(kernelsize=[10], thetarotations=2, sigmas=[3], lamdas=[2.*np.pi], gammas=[0.4]):
-    import cv2 as cv
-    kernels = []
-    for ksize in kernelsize:
-        for theta in range(thetarotations):        # Thetarotations
-            theta = theta / float(thetarotations) * np.pi
-            for sigma in sigmas:                   # SIGMA with 1 and 3
-                for lamda in lamdas:               # range of wavelengths
-                    for gamma in gammas:           # GAMMA values of 0.05 and 0.5
-                        phi = 0
-                        kernel = cv.getGaborKernel(
-                            (ksize, ksize), sigma, theta, lamda, gamma, phi, ktype=cv.CV_32F)
-                        kernels.append(kernel)
-    return kernels

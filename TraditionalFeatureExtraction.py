@@ -12,11 +12,28 @@ if __name__ == "__main__":
         print("Missing arguments")
     try:
         data_path = str(args[0])
-        filename = str(args[1])
-        image_size = (int(args[2]), int(args[2]))
+        dirname = str(args[1])
+        image_size_x = int(args[2])
+        image_size_y = int(args[3])
+        resize_method = str(args[4])
+        colorfeature = int(args[5])
+        ROIColorfeature = int(args[6])
+        edgefeature = int(args[7])
+        LBPfeature = int(args[8])
+        orbfeature = int(args[9])
 
     except Exception as e:
-        print("Wrong usage of arguments.")
+        print("Wrong usage of arguments. Correct usage is:")
+        print("Arg 1: Entire file path do Image Data")
+        print("Arg 2: Directory name of results folder (Will be created automatically if no directory exists)")
+        print("Arg 3: Image size X value")
+        print("Arg 4: Image size Y value")
+        print("Arg 5: Resize method: Lanczos, Area, Linear or Cubic")
+        print("Arg 6: 0 or 1 if you want to use Colorfeatures")
+        print("Arg 7: 0 or 1 if you want to use ROI Colorfeatures")
+        print("Arg 8: 0 or 1 if you want to use Edge Features")        
+        print("Arg 9: 0 or 1 if you want to use LBP Features")
+        print("Arg 10: 0 or 1 if you want to use ORB Features")
         print(e)
         quit()
 
@@ -26,15 +43,13 @@ if __name__ == "__main__":
     # Get image paths in data directory
     all_image_paths = get_image_paths(data_path)
 
-    gabor_filters = create_gabor_filters()  # Creates list of Gabor filters
 
     if take_time:
         starttime = time.time()  # Start time
     # Feature Extraction
     dataframe_list = []
     for path in all_image_paths:
-        dataframe = traditional_feature_extraction(
-            path, gabor_filters, image_size)
+        dataframe = traditional_feature_extraction(path, (image_size_x, image_size_y), resize_method, colorfeature, ROIColorfeature, edgefeature, LBPfeature, orbfeature)
         dataframe_list.append(dataframe)
     df = pd.concat(dataframe_list, ignore_index=True)
     if take_time:
@@ -43,5 +58,5 @@ if __name__ == "__main__":
         print(
             f"Time elapsed to extract features of {len(all_image_paths)} Images: {endtime-starttime}")
 
-    saveFeaturesInCSV("Results/Traditional/", filename, df)
-
+    saveDataFrameAsCSV("Results/", dirname, df)
+    print(f"Finished feature extraction. Results are stored in /Results/{dirname}/")
