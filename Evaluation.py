@@ -71,7 +71,7 @@ if __name__ == "__main__":
             merged_image = combine_images(columns=column_number, space=10, images=image_list,
                                           distances=distance_to_centroid, metric_string=metric_string)
             merged_image.save(str(cluster_number)+".png")
-            merged_image.show()
+            #merged_image.show()
 
     #X = TSNE(n_components=2, perplexity=5).fit_transform(features_pca_df)
     #tsne_df = pd.DataFrame()

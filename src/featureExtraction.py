@@ -76,15 +76,15 @@ def binaryPatterns(feature_vector, image, numPoints, radius):
     hist = hist.astype("float")
 
     #hist /= (hist.sum()+eps)
-    plt.figure()
-    plt.style.use('seaborn')
-    plt.plot(hist)
-    plt.xlim([0,numPoints])
-    plt.title('LBP Histogram')
-    plt.xlabel('Uniform LBP Value')
-    plt.ylabel('Percentage')
-    #plt.legend(loc="upper right")
-    plt.show()
+    #plt.figure()
+    #plt.style.use('seaborn')
+    #plt.plot(hist)
+    #plt.xlim([0,numPoints])
+    #plt.title('LBP Histogram')
+    #plt.xlabel('Uniform LBP Value')
+    #plt.ylabel('Percentage')
+    ##plt.legend(loc="upper right")
+    #plt.show()
     for index, val in enumerate(hist):
         feature_vector["BP"+str(index)] = val
     return feature_vector
@@ -97,8 +97,8 @@ def canny_edge_feature_extraction(feature_vector, grey_image):
     lower = int(max(0, (1.0-sigma)*median))
     upper = int(min(255, (1.0+sigma)*median))
     edge_canny = cv.Canny(grey_image, lower, upper)
-    plt.imshow(edge_canny)
-    plt.show()
+    #plt.imshow(edge_canny)
+    #plt.show()
     row_sums = np.sum(edge_canny, axis=0)
     column_sums = np.sum(edge_canny, axis=1)
     for index, row in enumerate(row_sums):
