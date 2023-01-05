@@ -22,11 +22,11 @@ module load scikit-learn/0.23.2-fosscuda-2020b
 # The rest of this jobscript is handled as a usual bash script that will run
 # on the primary node (in this case there is only one node) of the allocation
 # Here you should make sure to run what you want to be run
-CSV_PATH=Results/DNN/DNN-VGG16-Big/DNN-VGG16-Big.csv
-CSV_FOLDER_NAME=DNN-VGG16-Big
+CSV_PATH=TraditionalKmeans/TraditionalKmeans.csv
+CSV_FOLDER_NAME=TraditionalKmeans
 NORM_METHOD=Normalize           # Normalize/Standardize/MinMax
-PCA=0.92                        #range (0,1) or nr_components
-MIN_CLUSTERS=12
+PCA=0.9                       #range (0,1) or nr_components
+MIN_CLUSTERS=10
 MAX_CLUSTERS=40
 #TEST_PATH=/cephyr/NOBACKUP/groups/uu-it-gov/top20/frames/THKgFtr7J2w/
 python3 KMeansClustering.py $CSV_PATH $CSV_FOLDER_NAME $NORM_METHOD $PCA $MIN_CLUSTERS $MAX_CLUSTERS
