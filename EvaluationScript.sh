@@ -22,9 +22,9 @@ module load scikit-learn/0.23.2-fosscuda-2020b
 # The rest of this jobscript is handled as a usual bash script that will run
 # on the primary node (in this case there is only one node) of the allocation
 # Here you should make sure to run what you want to be run
-CLUSTER_CSV_PATH=DNN/DNN-VGG16-Big/ClusterResults.csv
+CLUSTER_CSV_PATH=TraditionalKmeans/ClusterResults.csv
 
-RESULT_IMG_PATH=DNN/DNN-VGG16-Big/
+RESULT_IMG_PATH=/TraditionalKmeans
 
 NR_IMAGES=50
 
