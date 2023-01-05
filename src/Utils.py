@@ -70,6 +70,5 @@ def get_image_paths(data_path):
             if sample.endswith('.png'):
                 full_path = directories[0] + "/" + sample
                 all_paths.append(full_path)
-                i += 1
     print(len(all_paths))
     return all_paths
