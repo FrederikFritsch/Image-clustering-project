@@ -9,7 +9,7 @@
 
 #SBATCH -A SNIC2021-7-164      # find your project with the "projinfo" command
 #SBATCH -p alvis               # what partition to use (usually not necessary)
-#SBATCH -t 0-10:00:00          # how long time it will take to run
+#SBATCH -t 0-00:01:00          # how long time it will take to run
 #SBATCH --gpus-per-node=A40:4  # choosing no. GPUs and their type
 #SBATCH -J FirstRun        # the jobname (not necessary)
 
