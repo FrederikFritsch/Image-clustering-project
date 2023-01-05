@@ -19,10 +19,11 @@ module load Pillow-SIMD/8.3.1-GCCcore-11.2.0
 # The rest of this jobscript is handled as a usual bash script that will run
 # on the primary node (in this case there is only one node) of the allocation
 # Here you should make sure to run what you want to be run
-DATA_PATH=/cephyr/NOBACKUP/groups/uu-it-gov/frames/
-CSV_FOLDER_NAME=DNN-VGG16-Big
+DATA_PATH=/cephyr/NOBACKUP/groups/uu-it-gov/top20/frames
+CSV_FOLDER_NAME=VGG16_Kmeans
 # CURRENTLY SUPPORTED PRE-TRAINED MODELS ARE:
 # - VGG16
+# - Xception
 MODEL_TYPE=VGG16
 #TEST_PATH=/cephyr/NOBACKUP/groups/uu-it-gov/top20/frames/THKgFtr7J2w/
 python3 NeuralNetworkFeatureExtraction.py $DATA_PATH $CSV_FOLDER_NAME $MODEL_TYPE
