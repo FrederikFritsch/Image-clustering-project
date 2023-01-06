@@ -82,7 +82,7 @@ Where the inputs are the following:
 * MODEL_TYPE = VGG16 || XCEPTION
 
 Example on how to run this file:
-```python3 KMeansClustering.py /Image_Data/ DNNTest VGG16 ```
+```python3 NeuralNetworkFeatureExtraction.py /Image_Data/ DNNTest VGG16 ```
 
 ---
 ### Clustering

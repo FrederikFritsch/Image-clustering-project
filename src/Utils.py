@@ -63,17 +63,12 @@ def get_image_paths(data_path):
     #print("Data Path is : " + str(data_path))
     # print(os.walk(data_path))
     
-    max_images = 5  #nr of max images to use per directory
     for index, directories in enumerate(os.walk(data_path)):
         # print(directories)
-        i = 0
         for sample in directories[2]:
             # print(sample)
-            if i >= max_images:
-                break
             if sample.endswith('.png'):
                 full_path = directories[0] + "/" + sample
                 all_paths.append(full_path)
-                i += 1
     print(len(all_paths))
     return all_paths
