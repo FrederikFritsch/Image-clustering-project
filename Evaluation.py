@@ -8,7 +8,7 @@ import sys
 from sklearn.preprocessing import StandardScaler, normalize
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
-#import seaborn as sns
+# import seaborn as sns
 from src.Utils import *
 import datetime
 
@@ -33,11 +33,16 @@ if __name__ == "__main__":
     except Exception as e:
         print(e)
         quit()
-    # print(df)
 
-    #n_clusters = df.max()["Cluster"]+1
     n_clusters = len(df["Cluster"].unique())
-    # print(n_clusters)
+
+    # Saving barplot of amount of images
+    df_value_counts = df["Cluster"].value_counts().fillna(0)
+    fig, ax = plt.subplots(figsize=(10, 7))
+    ax.bar(list(range(n_clusters)), df_value_counts)
+    ax.set_ylabel('Amount of Images')
+    ax.figure.savefig(dir + "/" + "bar.png")
+    # ----------------------------------------------------------------
 
     date = datetime.datetime.now()
     dir_name = date.strftime("%c")  # .replace(":", "")
@@ -71,20 +76,20 @@ if __name__ == "__main__":
             merged_image = combine_images(columns=column_number, space=10, images=image_list,
                                           distances=distance_to_centroid, metric_string=metric_string)
             merged_image.save(str(cluster_number)+".png")
-            #merged_image.show()
+            # merged_image.show()
 
-    #X = TSNE(n_components=2, perplexity=5).fit_transform(features_pca_df)
-    #tsne_df = pd.DataFrame()
-    ##cluster_labels = pd.Series(labels[np.argmax(silhouette_coefficients)])
-    #tsne_df["Image Name"] = df["Name"]
-    #tsne_df['ClusterID'] = cluster_labels.values
-    #tsne_df["X_tsne"]  = X[:, 0]
-    #tsne_df["Y_tsne"] = X[:, 1]
+    # X = TSNE(n_components=2, perplexity=5).fit_transform(features_pca_df)
+    # tsne_df = pd.DataFrame()
+    # cluster_labels = pd.Series(labels[np.argmax(silhouette_coefficients)])
+    # tsne_df["Image Name"] = df["Name"]
+    # tsne_df['ClusterID'] = cluster_labels.values
+    # tsne_df["X_tsne"]  = X[:, 0]
+    # tsne_df["Y_tsne"] = X[:, 1]
     # print(tsne_df)
     # sns.scatterplot(
     # x="X_tsne", y="Y_tsne",
     # hue="ClusterID",
-    ##    palette=sns.color_palette("hls", 10),
+    # palette=sns.color_palette("hls", 10),
     # data=tsne_df,
     # legend="full",
     # alpha=1
