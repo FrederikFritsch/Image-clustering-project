@@ -41,6 +41,7 @@ if __name__ == "__main__":
     fig, ax = plt.subplots(figsize=(10, 7))
     ax.bar(list(range(n_clusters)), df_value_counts)
     ax.set_ylabel('Amount of Images')
+    ax.set_xlabel('Cluster Number')
     ax.figure.savefig(dir + "/" + "bar.png")
     # ----------------------------------------------------------------
 
